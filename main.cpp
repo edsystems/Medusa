@@ -16,43 +16,65 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include <iostream>
-#include <functional>
-#include <algorithm>
 #include <string>
-#include <vector>
-#include <thread>
-#include <mutex>
-#include <chrono>
-#include <cstdlib>
-#include <ctime>
+#include <iostream>
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
+#include "cpp11test.hpp"
 
-#include "boost/asio/impl/src.hpp"
+using boost::asio::ip::tcp;
+
+void SyncClientTest() {
+    try {
+        boost::asio::io_service io_service;
+        tcp::resolver resolver(io_service);
+        tcp::resolver::query query("localhost", "3074");
+        tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+        tcp::socket socket(io_service);
+        boost::asio::connect(socket, endpoint_iterator);
+        for (;;) {
+            boost::array<char, 128> buf;
+            boost::system::error_code error;
+            size_t len = socket.read_some(boost::asio::buffer(buf), error);
+            if (error == boost::asio::error::eof)
+                break; // Connection closed cleanly by peer.
+            else if (error)
+                throw boost::system::system_error(error); // Some other error.
+            std::cout.write(buf.data(), len);
+        }
+    } catch (std::exception& e) {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
+void SyncServerTest() {
+    try {
+        boost::asio::io_service io_service;
+        tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), 3074));
+        for (;;) {
+            tcp::socket socket(io_service);
+            acceptor.accept(socket);
+            std::string message = "Hello, world!";
+            boost::system::error_code ignored_error;
+            boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
+        }
+    } catch (std::exception& e) {
+        std::cerr << e.what() << std::endl;
+    }
+}
 
 int main(int argc, char ** argv) {
-    std::vector<std::string> data { "Zeus", "Athenea", "Ares", "Apollo", "Aphrodite" };
-    std::vector<std::thread> threads;
-    std::mutex printMutex;
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    std::for_each(
-        std::begin(data), std::end(data),
-        [&] (const std::string & victim) {
-            threads.push_back(std::thread(
-                [&] (const std::string & name) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % 100));
-                    printMutex.lock();
-                    std::cout << "Hello, " << name << "." << std::endl;
-                    printMutex.unlock();
-                },
-                victim
-            ));
+    if (argc == 2) {
+        std::string firstArg(argv[1]);
+        if (firstArg == "s") {
+            SyncServerTest();
+        } else if (firstArg == "c") {
+            SyncClientTest();
+        } else {
+            std::cout << "Nothing to do..." << std::endl;
         }
-    );
-    std::for_each(
-        std::begin(threads), std::end(threads),
-        [] (std::thread & victim) {
-            victim.join();
-        }
-    );
+    } else {
+        Cpp11Test();
+    }
     return 0;
 }

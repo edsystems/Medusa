@@ -131,6 +131,10 @@
 // to ensure the correct libraries are selected at link time.
 // #define BOOST_LIB_BUILDID amd64
 
-#define BOOST_ERROR_CODE_HEADER_ONLY
-#define BOOST_ASIO_SEPARATE_COMPILATION
+#ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0501
+#endif
+
+#ifndef BOOST_ASIO_SEPARATE_COMPILATION
+#define BOOST_ASIO_SEPARATE_COMPILATION
+#endif
