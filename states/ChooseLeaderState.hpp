@@ -16,13 +16,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include <iostream>
-#include <CoreManager.hpp>
-#include <tests/boosttest.hpp>
+#ifndef __MEDUSA_CHOOSE_LEADER_STATE__
+#define __MEDUSA_CHOOSE_LEADER_STATE__
 
-int main(int argc, char ** argv) {
-    BoostTest(argc, argv);
-    auto & core = CoreManager::Reference();
-    std::cout << "Hamperdine" << std::endl;
-    return 0;
-}
+#include <states/IState.hpp>
+
+//TODO: Complete this file...
+
+#endif

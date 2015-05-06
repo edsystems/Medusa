@@ -16,13 +16,29 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include <iostream>
-#include <CoreManager.hpp>
-#include <tests/boosttest.hpp>
+#include "CoreManager.hpp"
 
-int main(int argc, char ** argv) {
-    BoostTest(argc, argv);
-    auto & core = CoreManager::Reference();
-    std::cout << "Hamperdine" << std::endl;
-    return 0;
+std::unique_ptr<CoreManager> CoreManager::instance_(nullptr);
+
+CoreManager::CoreManager() : state_() {
+}
+
+CoreManager::~CoreManager() {
+}
+
+CoreManager * CoreManager::Instance() {
+    if (!instance_) {
+        instance_.reset(new CoreManager());
+    }
+    return instance_.get();
+}
+
+CoreManager & CoreManager::Reference() {
+    return *Instance();
+}
+
+void CoreManager::SetState(IState * value) {
+    if (state_) { state_->Release(); }
+    state_.reset(value);
+    if (state_) { state_->Initialize(); }
 }

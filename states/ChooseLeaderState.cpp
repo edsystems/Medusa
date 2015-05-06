@@ -16,13 +16,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include <iostream>
-#include <CoreManager.hpp>
-#include <tests/boosttest.hpp>
+#include "ChooseLeaderState.hpp"
 
-int main(int argc, char ** argv) {
-    BoostTest(argc, argv);
-    auto & core = CoreManager::Reference();
-    std::cout << "Hamperdine" << std::endl;
-    return 0;
-}
+//TODO: Complete this file...

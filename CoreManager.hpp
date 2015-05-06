@@ -16,13 +16,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include <iostream>
-#include <CoreManager.hpp>
-#include <tests/boosttest.hpp>
+#ifndef __MEDUSA_CORE_MANAGER__
+#define __MEDUSA_CORE_MANAGER__
 
-int main(int argc, char ** argv) {
-    BoostTest(argc, argv);
-    auto & core = CoreManager::Reference();
-    std::cout << "Hamperdine" << std::endl;
-    return 0;
-}
+#include <memory>
+#include <states/IState.hpp>
+
+class CoreManager {
+private:
+    CoreManager();
+    static std::unique_ptr<CoreManager> instance_;
+    std::unique_ptr<IState> state_;
+public:
+    ~CoreManager();
+    static CoreManager * Instance();
+    static CoreManager & Reference();
+    inline IState * GetState() { return state_.get(); }
+    void SetState(IState * value);
+};
+
+#endif

@@ -16,13 +16,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include <iostream>
-#include <CoreManager.hpp>
-#include <tests/boosttest.hpp>
+#ifndef __MEDUSA_ISTATE__
+#define __MEDUSA_ISTATE__
 
-int main(int argc, char ** argv) {
-    BoostTest(argc, argv);
-    auto & core = CoreManager::Reference();
-    std::cout << "Hamperdine" << std::endl;
-    return 0;
-}
+class IState {
+public:
+    IState();
+    virtual ~IState();
+    virtual void Initialize() = 0;
+    virtual void Release() = 0;
+};
+
+#endif
