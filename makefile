@@ -17,20 +17,26 @@ SOURCES = main.cpp \
           states/WorkerState.cpp \
           tests/boosttest.cpp \
           tests/cpp11test.cpp
-_SRCS   = $(notdir $(SOURCES))
-_OBJS   = $(_SRCS:.cpp=.o)
-OBJECTS = $(patsubst %,$(ODIR)/%,$(_OBJ))
+_OBJS   = $(SOURCES:.cpp=.o)
+OBJECTS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 OUTNAME = medusa
 
 #--------------------------------------------------------------------------------
 # Compilation:
 #--------------------------------------------------------------------------------
 
+all: $(OUTNAME)
+
+initialize:
+	mkdir -p $(ODIR)
+	mkdir -p $(ODIR)/states
+	mkdir -p $(ODIR)/tests
+
+$(ODIR)/%.o: %.cpp initialize
+	$(CC) $(CFLAGS) -o $@ $<
+
 $(OUTNAME): $(OBJECTS)
 	$(CC) $(LFLAGS) -o $@ $^
-
-$(ODIR)/%.o:
-    $(CC) $(CFLAGS) $< -o $@
 
 #--------------------------------------------------------------------------------
 # Clean:
@@ -39,4 +45,4 @@ $(ODIR)/%.o:
 .PHONY: clean
 
 clean:
-    rm $(OUTNAME) $(OBJECTS)
+	rm $(OUTNAME) $(OBJECTS)
