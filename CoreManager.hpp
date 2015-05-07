@@ -21,15 +21,26 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include <cstdint>
 
 class CoreManager {
+public:
+    // Types:
+    struct Partner {
+        std::string address, port;
+        Partner(const std::string & ad, const std::string & po) :
+            address(ad), port(po) {}
+    };
 private:
     // Singleton:
     CoreManager();
     static std::unique_ptr<CoreManager> instance_;
     // Fields:
     uint16_t listenPort_;
+    std::vector<Partner> partners_;
+    // Methods:
+    void loadConfiguration(const std::string & path);
 public:
     // Singleton:
     ~CoreManager();
@@ -37,12 +48,13 @@ public:
     static CoreManager & Reference();
     // Properties:
     inline uint16_t GetListenPort() { return listenPort_; }
-    void SetListenPort(uint16_t value);
+    inline std::vector<Partner> & GetPartners() { return partners_; }
     // Methods:
     inline std::string GetListenPortAsString() const {
         return std::to_string(listenPort_);
     }
     void Initialize();
+    void Run();
 };
 
 #endif

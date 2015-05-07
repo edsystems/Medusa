@@ -18,7 +18,11 @@
 
 #include "CoreManager.hpp"
 
+#include <fstream>
+#include <sstream>
+#include <iostream>
 #include <Options.hpp>
+#include <Utility.hpp>
 
 //********************************************************************************
 // Singleton:
@@ -28,7 +32,7 @@ std::unique_ptr<CoreManager> CoreManager::instance_(nullptr);
 
 //--------------------------------------------------------------------------------
 
-CoreManager::CoreManager() : listenPort_(0) {
+CoreManager::CoreManager() : listenPort_(0), partners_() {
 }
 
 //--------------------------------------------------------------------------------
@@ -52,18 +56,41 @@ CoreManager & CoreManager::Reference() {
 }
 
 //********************************************************************************
-// Properties:
-//********************************************************************************
-
-void CoreManager::SetListenPort(uint16_t value) {
-    listenPort_ = value;
-}
-
-//********************************************************************************
 // Methods:
 //********************************************************************************
 
 void CoreManager::Initialize() {
     listenPort_ = static_cast<uint16_t>(std::stoi(Options::Get(Options::PORT_NUMBER_KEY)));
+    loadConfiguration(Options::Get(Options::CONFIG_FILE_KEY));
+    //TODO: Complete this code...
     //...
+}
+
+//--------------------------------------------------------------------------------
+
+void CoreManager::loadConfiguration(const std::string & path) {
+    partners_.clear();
+    std::string line;
+    std::ifstream file(path);
+    while (std::getline(file, line)) {
+        std::string address, port;
+        std::stringstream sline(line);
+        bool ok = std::getline(sline, address, ' ') &&
+                  std::getline(sline, port, ' ') &&
+                  IsPortNumber(port);
+        if (ok) {
+            partners_.push_back(Partner(address, port));
+        }
+    }
+}
+
+//--------------------------------------------------------------------------------
+
+void CoreManager::Run() {
+    while (true) {
+        //TODO: Complete this code...
+        std::cout << "Nothing to do yet..." << std::endl;
+        break;
+        //...
+    }
 }

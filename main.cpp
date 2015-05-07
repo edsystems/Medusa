@@ -16,13 +16,22 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
+#include <iostream>
 #include <Options.hpp>
 #include <CoreManager.hpp>
 
 int main(int argc, char ** argv) {
     Options::Parse(argc, argv);
-    auto & core = CoreManager::Reference();
-    core.Initialize();
-    //...
+    if (Options::Get(Options::HELP_KEY) == Options::HELP_YES) {
+        std::cout << "medusa [options]" << std::endl;
+        std::cout << "\t--port   port => Changes the port of" << std::endl;
+        std::cout << "\t -p      port    the server." << std::endl;
+        std::cout << "\t--config path => The file to load with" << std::endl;
+        std::cout << "\t -c      path    the configuration." << std::endl;
+    } else {
+        auto & core = CoreManager::Reference();
+        core.Initialize();
+        core.Run();
+    }
     return 0;
 }
