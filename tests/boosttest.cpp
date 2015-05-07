@@ -20,7 +20,7 @@
 #include <iostream>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
-#include <tests/cpp11test.hpp>
+#include "cpp11test.hpp"
 
 using boost::asio::ip::tcp;
 

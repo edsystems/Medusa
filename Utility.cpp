@@ -16,6 +16,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "LeaderState.hpp"
+#include "Utility.hpp"
 
-//TODO: Complete this file...
+#include <limits>
+
+//********************************************************************************
+// Functions:
+//********************************************************************************
+
+bool IsPortNumber(const std::string & victim) {
+    try {
+        int value = std::stoi(victim);
+        if (0 <= value && value <= std::numeric_limits<unsigned short>::max()) {
+            return true;
+        }
+    } catch (...) {
+    }
+    return false;
+}

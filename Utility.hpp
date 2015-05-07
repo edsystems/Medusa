@@ -16,11 +16,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#ifndef __MEDUSA_INITIAL_STATE__
-#define __MEDUSA_INITIAL_STATE__
+#ifndef __MEDUSA_UTILITY__
+#define __MEDUSA_UTILITY__
 
-#include <states/IState.hpp>
+#include <string>
 
-//TODO: Complete this file...
+bool IsPortNumber(const std::string & victim);
 
 #endif

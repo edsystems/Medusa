@@ -20,19 +20,29 @@
 #define __MEDUSA_CORE_MANAGER__
 
 #include <memory>
-#include <states/IState.hpp>
+#include <string>
+#include <cstdint>
 
 class CoreManager {
 private:
+    // Singleton:
     CoreManager();
     static std::unique_ptr<CoreManager> instance_;
-    std::unique_ptr<IState> state_;
+    // Fields:
+    uint16_t listenPort_;
 public:
+    // Singleton:
     ~CoreManager();
     static CoreManager * Instance();
     static CoreManager & Reference();
-    inline IState * GetState() { return state_.get(); }
-    void SetState(IState * value);
+    // Properties:
+    inline uint16_t GetListenPort() { return listenPort_; }
+    void SetListenPort(uint16_t value);
+    // Methods:
+    inline std::string GetListenPortAsString() const {
+        return std::to_string(listenPort_);
+    }
+    void Initialize();
 };
 
 #endif

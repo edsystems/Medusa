@@ -18,13 +18,25 @@
 
 #include "CoreManager.hpp"
 
+#include <Options.hpp>
+
+//********************************************************************************
+// Singleton:
+//********************************************************************************
+
 std::unique_ptr<CoreManager> CoreManager::instance_(nullptr);
 
-CoreManager::CoreManager() : state_() {
+//--------------------------------------------------------------------------------
+
+CoreManager::CoreManager() : listenPort_(0) {
 }
+
+//--------------------------------------------------------------------------------
 
 CoreManager::~CoreManager() {
 }
+
+//--------------------------------------------------------------------------------
 
 CoreManager * CoreManager::Instance() {
     if (!instance_) {
@@ -33,12 +45,25 @@ CoreManager * CoreManager::Instance() {
     return instance_.get();
 }
 
+//--------------------------------------------------------------------------------
+
 CoreManager & CoreManager::Reference() {
     return *Instance();
 }
 
-void CoreManager::SetState(IState * value) {
-    if (state_) { state_->Release(); }
-    state_.reset(value);
-    if (state_) { state_->Initialize(); }
+//********************************************************************************
+// Properties:
+//********************************************************************************
+
+void CoreManager::SetListenPort(uint16_t value) {
+    listenPort_ = value;
+}
+
+//********************************************************************************
+// Methods:
+//********************************************************************************
+
+void CoreManager::Initialize() {
+    listenPort_ = static_cast<uint16_t>(std::stoi(Options::Get(Options::PORT_NUMBER_KEY)));
+    //...
 }

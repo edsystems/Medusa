@@ -16,6 +16,28 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "WorkerState.hpp"
+#ifndef __MEDUSA_OPTIONS__
+#define __MEDUSA_OPTIONS__
 
-//TODO: Complete this file...
+#include <map>
+#include <string>
+
+class Options {
+private:
+    // Fields:
+    static std::map<std::string, std::string> data_;
+public:
+    // Constants:
+    static const std::string HELP_KEY;
+    static const std::string HELP_NO;
+    static const std::string HELP_YES;
+    static const std::string PORT_NUMBER_KEY;
+    static const std::string PORT_NUMBER_VAL;
+    static const std::string CONFIG_FILE_KEY;
+    static const std::string CONFIG_FILE_VAL;
+    // Methods:
+    static void Parse(int argc, char ** argv);
+    static const std::string & Get(const std::string & key);
+};
+
+#endif

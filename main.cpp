@@ -16,13 +16,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include <iostream>
+#include <Options.hpp>
 #include <CoreManager.hpp>
-#include <tests/boosttest.hpp>
 
 int main(int argc, char ** argv) {
-    BoostTest(argc, argv);
+    Options::Parse(argc, argv);
     auto & core = CoreManager::Reference();
-    std::cout << "Hamperdine" << std::endl;
+    core.Initialize();
+    //...
     return 0;
 }
