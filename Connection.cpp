@@ -19,14 +19,7 @@
 #include "Connection.hpp"
 
 //********************************************************************************
-// Constants:
-//********************************************************************************
-
-#define NO_ADDRESS_VALUE ""
-#define NO_PORT_VALUE 0
-
-//********************************************************************************
-// Constructors:
+// [Connection] Constructors:
 //********************************************************************************
 
 Connection::Connection(SharedSocket & socket) :
@@ -37,27 +30,27 @@ Connection::Connection(SharedSocket & socket) :
 Connection::~Connection() {}
 
 //********************************************************************************
-// Properties:
+// [Connection] Properties:
 //********************************************************************************
 
 std::string Connection::GetLocalAddress() const {
-    return socket_ ? socket_->local_endpoint().address().to_string() : NO_ADDRESS_VALUE;
+    return socket_->local_endpoint().address().to_string();
 }
 
 //--------------------------------------------------------------------------------
 
 std::string Connection::GetRemoteAddress() const {
-    return socket_ ? socket_->remote_endpoint().address().to_string() : NO_ADDRESS_VALUE;
+    return socket_->remote_endpoint().address().to_string();
 }
 
 //--------------------------------------------------------------------------------
 
 uint16_t Connection::GetLocalPort() const {
-    return socket_ ? socket_->local_endpoint().port() : NO_PORT_VALUE;
+    return socket_->local_endpoint().port();
 }
 
 //--------------------------------------------------------------------------------
 
 uint16_t Connection::GetRemotePort() const {
-    return socket_ ? socket_->remote_endpoint().port() : NO_PORT_VALUE;
+    return socket_->remote_endpoint().port();
 }

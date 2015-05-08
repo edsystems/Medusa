@@ -29,7 +29,7 @@ public:
     // Types:
     typedef std::shared_ptr<std::thread> SharedThread;
     typedef std::shared_ptr<boost::asio::ip::tcp::socket> SharedSocket;
-private:
+protected:
     // Fields:
     bool finished_;
     SharedThread thread_;
@@ -40,6 +40,8 @@ public:
     virtual ~Connection();
     // Properties:
     inline bool IsFinished() const { return finished_; }
+    inline bool HasThread() const { return thread_.get() != nullptr; }
+    inline bool HasSocket() const { return socket_.get() != nullptr; }
     std::string GetLocalAddress() const;
     std::string GetRemoteAddress() const;
     uint16_t GetLocalPort() const;
