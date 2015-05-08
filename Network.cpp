@@ -16,28 +16,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#ifndef __MEDUSA_OPTIONS__
-#define __MEDUSA_OPTIONS__
+#include "Network.hpp"
 
-#include <map>
-#include <string>
+//********************************************************************************
+// :
+//********************************************************************************
 
-class Options {
-public:
-    // Types:
-    enum Key { HelpKey, PortNumberKey, ServersFileKey };
-private:
-    // Fields:
-    static std::map<Key, std::string> data_;
-public:
-    // Constants:
-    static const std::string HELP_NO;
-    static const std::string HELP_YES;
-    static const std::string PORT_NUMBER_VAL;
-    static const std::string SERVERS_FILE_VAL;
-    // Methods:
-    static void Parse(int argc, char ** argv);
-    static const std::string & Get(Key key);
-};
-
-#endif
+//--------------------------------------------------------------------------------

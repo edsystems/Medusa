@@ -16,39 +16,48 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "ListenProtocol.hpp"
+#include "Connection.hpp"
 
-#include <iostream>
-#include <boost/asio/write.hpp>
+//********************************************************************************
+// Constants:
+//********************************************************************************
+
+#define NO_ADDRESS_VALUE ""
+#define NO_PORT_VALUE 0
 
 //********************************************************************************
 // Constructors:
 //********************************************************************************
 
-ListenProtocol::ListenProtocol(SharedTcpSocket & socket) :
+Connection::Connection(SharedSocket & socket) :
     finished_(false), thread_(nullptr), socket_(socket) {}
 
+//--------------------------------------------------------------------------------
+
+Connection::~Connection() {}
+
 //********************************************************************************
-// Methods:
+// Properties:
 //********************************************************************************
 
-void ListenProtocol::Run() {
-    //TODO: Complete this method...
-    thread_ = std::make_shared<std::thread>(
-        [&] () {
-            finished_ = true;
-            //TODO: Test code...
-            auto local_ep = socket_->local_endpoint();
-            auto remote_ep = socket_->remote_endpoint();
-            std::cout << "[LOCAL] " << local_ep.address() << " : " << local_ep.port() << std::endl;
-            std::cout << "[REMOTE] " << remote_ep.address() << " : " << remote_ep.port() << std::endl;
-            //...
-            std::string message = "Hello, world!";
-            boost::system::error_code ignored_error;
-            boost::asio::write(*socket_, boost::asio::buffer(message), ignored_error);
-            //...
-        }
-    );
-    thread_->detach();
-    //...
+std::string Connection::GetLocalAddress() const {
+    return socket_ ? socket_->local_endpoint().address().to_string() : NO_ADDRESS_VALUE;
+}
+
+//--------------------------------------------------------------------------------
+
+std::string Connection::GetRemoteAddress() const {
+    return socket_ ? socket_->remote_endpoint().address().to_string() : NO_ADDRESS_VALUE;
+}
+
+//--------------------------------------------------------------------------------
+
+uint16_t Connection::GetLocalPort() const {
+    return socket_ ? socket_->local_endpoint().port() : NO_PORT_VALUE;
+}
+
+//--------------------------------------------------------------------------------
+
+uint16_t Connection::GetRemotePort() const {
+    return socket_ ? socket_->remote_endpoint().port() : NO_PORT_VALUE;
 }

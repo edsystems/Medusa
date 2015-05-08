@@ -25,10 +25,15 @@ int main(int argc, char ** argv) {
     Options::Parse(argc, argv);
     if (Options::Get(Options::HelpKey) == Options::HELP_YES) {
         std::cout << "medusa [options]" << std::endl;
-        std::cout << "\t--port   port => Changes the port of" << std::endl;
-        std::cout << "\t -p      port    the server." << std::endl;
-        std::cout << "\t--config path => The file to load with" << std::endl;
-        std::cout << "\t -c      path    the configuration." << std::endl;
+        std::cout << "\t--port    port => Changes the port of" << std::endl;
+        std::cout << "\t -p       port    the server." << std::endl;
+        std::cout << "\t--servers path => The file to load with" << std::endl;
+        std::cout << "\t -s       path    the servers list." << std::endl;
+        std::cout << std::endl;
+        std::cout << "Default values:" << std::endl;
+        std::cout << "\tport = " << Options::PORT_NUMBER_VAL << std::endl;
+        std::cout << "\tpath = " << Options::SERVERS_FILE_VAL << std::endl;
+        std::cout << std::endl;
     } else {
         InitializeRandom();
         CoreManager::Instance()->Run();

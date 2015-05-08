@@ -19,8 +19,8 @@
 #ifndef __MEDUSA_LISTEN_PROTOCOL__
 #define __MEDUSA_LISTEN_PROTOCOL__
 
-#include <thread>
 #include <memory>
+#include <thread>
 #include <boost/asio/ip/tcp.hpp>
 
 typedef std::shared_ptr<std::thread> SharedThread;

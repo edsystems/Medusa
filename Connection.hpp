@@ -16,28 +16,36 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#ifndef __MEDUSA_OPTIONS__
-#define __MEDUSA_OPTIONS__
+#ifndef __MEDUSA_CONNECTION__
+#define __MEDUSA_CONNECTION__
 
-#include <map>
-#include <string>
+#include <memory>
+#include <thread>
+#include <cstdint>
+#include <boost/asio/ip/tcp.hpp>
 
-class Options {
+class Connection {
 public:
     // Types:
-    enum Key { HelpKey, PortNumberKey, ServersFileKey };
+    typedef std::shared_ptr<std::thread> SharedThread;
+    typedef std::shared_ptr<boost::asio::ip::tcp::socket> SharedSocket;
 private:
     // Fields:
-    static std::map<Key, std::string> data_;
+    bool finished_;
+    SharedThread thread_;
+    SharedSocket socket_;
 public:
-    // Constants:
-    static const std::string HELP_NO;
-    static const std::string HELP_YES;
-    static const std::string PORT_NUMBER_VAL;
-    static const std::string SERVERS_FILE_VAL;
+    // Constructors:
+    Connection(SharedSocket & socket);
+    virtual ~Connection();
+    // Properties:
+    inline bool IsFinished() const { return finished_; }
+    std::string GetLocalAddress() const;
+    std::string GetRemoteAddress() const;
+    uint16_t GetLocalPort() const;
+    uint16_t GetRemotePort() const;
     // Methods:
-    static void Parse(int argc, char ** argv);
-    static const std::string & Get(Key key);
+    virtual void Run() = 0;
 };
 
 #endif

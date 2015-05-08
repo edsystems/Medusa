@@ -75,8 +75,8 @@ void CoreManager::loadConfiguration(const std::string & path) {
     while (std::getline(file, line)) {
         std::string address, port;
         std::stringstream sline(line);
-        bool ok = std::getline(sline, address, ' ') &&
-                  std::getline(sline, port, ' ') &&
+        bool ok = std::getline(sline, address, ',') &&
+                  std::getline(sline, port, ',') &&
                   IsPortNumber(port);
         if (ok) {
             nodes_.push_back(Node(address, port));
@@ -129,7 +129,7 @@ int CoreManager::getRandomPriority() {
 
 //--------------------------------------------------------------------------------
 
-void chooseLeader() {
+void CoreManager::chooseLeader() {
 }
 
 //--------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ void CoreManager::Run() {
         // Initialize the node configuration:
         auto & portNumber = Options::Get(Options::PortNumberKey);
         listenPort_ = static_cast<uint16_t>(std::stoi(portNumber));
-        loadConfiguration(Options::Get(Options::ConfigFileKey));
+        loadConfiguration(Options::Get(Options::ServersFileKey));
         // Add the local node to the table:
         nodes_.push_back(Node(LOCAL_HOST, portNumber));
         auto localNode = findNode(LOCAL_HOST);

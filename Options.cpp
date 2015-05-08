@@ -29,7 +29,7 @@
 const std::string Options::HELP_NO("no");
 const std::string Options::HELP_YES("yes");
 const std::string Options::PORT_NUMBER_VAL("3074");
-const std::string Options::CONFIG_FILE_VAL("medusa.cfg");
+const std::string Options::SERVERS_FILE_VAL("servers.csv");
 
 //********************************************************************************
 // Fields:
@@ -46,7 +46,7 @@ void Options::Parse(int argc, char ** argv) {
     data_.clear();
     data_[HelpKey] = HELP_NO;
     data_[PortNumberKey] = PORT_NUMBER_VAL;
-    data_[ConfigFileKey] = CONFIG_FILE_VAL;
+    data_[ServersFileKey] = SERVERS_FILE_VAL;
     // Parse the command arguments:
     for (int i = 0; i < argc; ++i) {
         std::string item(argv[i]);
@@ -59,12 +59,12 @@ void Options::Parse(int argc, char ** argv) {
                     data_[PortNumberKey] = value;
                 }
             }
-        } else if (item == "-c" || item == "--config") {
-            // Check the configuration file option:
+        } else if (item == "-s" || item == "--servers") {
+            // Check the servers file option:
             ++i;
             if (i < argc) {
                 std::string value(argv[i]);
-                data_[ConfigFileKey] = value;
+                data_[ServersFileKey] = value;
             }
         } else if (item == "-h" || item == "--help") {
             // Check the help option:
