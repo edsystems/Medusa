@@ -16,51 +16,44 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "Connection.hpp"
+#include "ListenConnection.hpp"
 
-#include <Network.hpp>
+#include <iostream>
+#include <boost/asio/write.hpp>
 
 //********************************************************************************
-// [Connection] Constructors:
+// Constructors:
 //********************************************************************************
 
-Connection::Connection(SharedSocket & socket) :
-    finished_(false), thread_(nullptr), socket_(socket) {}
+ListenConnection::ListenConnection(SharedSocket & socket) :
+    Connection(socket) {}
 
 //--------------------------------------------------------------------------------
 
-Connection::~Connection() {}
+ListenConnection::~ListenConnection() {}
 
 //********************************************************************************
-// [Connection] Properties:
+// Methods:
 //********************************************************************************
 
-std::string Connection::GetLocalAddress() const {
-    return socket_->local_endpoint().address().to_string();
-}
-
-//--------------------------------------------------------------------------------
-
-std::string Connection::GetRemoteAddress() const {
-    return socket_->remote_endpoint().address().to_string();
-}
-
-//--------------------------------------------------------------------------------
-
-uint16_t Connection::GetLocalPort() const {
-    return socket_->local_endpoint().port();
-}
-
-//--------------------------------------------------------------------------------
-
-uint16_t Connection::GetRemotePort() const {
-    return socket_->remote_endpoint().port();
-}
-
-//********************************************************************************
-// [Connection] Methods:
-//********************************************************************************
-
-Connection::SharedSocket Connection::MakeSharedSocket() {
-    return std::make_shared<boost::asio::ip::tcp::socket>(Network::GetIoService());
+void ListenConnection::Run() {
+    //TODO: Complete this method...
+    thread_ = std::make_shared<std::thread>(
+        [&] () {
+            //TODO: Test code...
+            auto local_ep = socket_->local_endpoint();
+            auto remote_ep = socket_->remote_endpoint();
+            std::cout << "[LOCAL] " << local_ep.address() << " : " << local_ep.port() << std::endl;
+            std::cout << "[REMOTE] " << remote_ep.address() << " : " << remote_ep.port() << std::endl;
+            //...
+            std::string message = "Hello, world!";
+            boost::system::error_code ignored_error;
+            boost::asio::write(*socket_, boost::asio::buffer(message), ignored_error);
+            socket_->close();
+            //...
+            finished_ = true;
+        }
+    );
+    thread_->detach();
+    //...
 }

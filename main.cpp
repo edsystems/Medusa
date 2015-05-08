@@ -17,9 +17,11 @@
 //********************************************************************************
 
 #include <iostream>
-#include <CoreManager.hpp>
+#include <Server.hpp>
 #include <Options.hpp>
 #include <Utility.hpp>
+
+void BoostTest(int argc, char ** argv);
 
 int main(int argc, char ** argv) {
     Options::Parse(argc, argv);
@@ -34,9 +36,10 @@ int main(int argc, char ** argv) {
         std::cout << "\tport = " << Options::PORT_NUMBER_VAL << std::endl;
         std::cout << "\tpath = " << Options::SERVERS_FILE_VAL << std::endl;
         std::cout << std::endl;
-    } else {
-        InitializeRandom();
-        CoreManager::Instance()->Run();
+        return 0;
+    }
+    if (Server::Initialize()) {
+        Server::Run();
     }
     return 0;
 }

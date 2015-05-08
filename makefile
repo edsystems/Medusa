@@ -10,9 +10,14 @@ CFLAGS  = $(FLAGS) -c
 LFLAGS  = $(FLAGS) -lpthread
 SOURCES = main.cpp \
           boostimp.cpp \
+          Connection.cpp \
+          ConnectionPool.cpp \
           CoreManager.cpp \
-          ListenProtocol.cpp \
+          ListenConnection.cpp \
+          Network.cpp \
+          NetworkNode.cpp \
           Options.cpp \
+          Server.cpp \
           Utility.cpp
 _OBJS   = $(SOURCES:.cpp=.o)
 OBJECTS = $(patsubst %,$(ODIR)/%,$(_OBJS))

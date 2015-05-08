@@ -19,66 +19,6 @@
 #include "Network.hpp"
 
 //********************************************************************************
-// [NetworkNode] Constructors:
-//********************************************************************************
-
-NetworkNode::NetworkNode() : priority_(-1), endpoint_() {}
-
-//--------------------------------------------------------------------------------
-
-NetworkNode::~NetworkNode() {}
-
-//********************************************************************************
-// [NetworkNode] Operators:
-//********************************************************************************
-
-bool NetworkNode::operator==(const NetworkNode & rhs) {
-    return endpoint_ == rhs.endpoint_;
-}
-
-//--------------------------------------------------------------------------------
-
-bool NetworkNode::operator!=(const NetworkNode & rhs) {
-    return endpoint_ != rhs.endpoint_;
-}
-
-//********************************************************************************
-// [NetworkNode] Properties:
-//********************************************************************************
-
-std::string NetworkNode::GetHost() const {
-    return endpoint_->host_name();
-}
-
-//--------------------------------------------------------------------------------
-
-std::string NetworkNode::GetService() const {
-    return endpoint_->service_name();
-}
-
-//--------------------------------------------------------------------------------
-
-std::string NetworkNode::GetAddress() const {
-    return endpoint_->endpoint().address().to_string();
-}
-
-//--------------------------------------------------------------------------------
-
-uint16_t NetworkNode::GetPort() const {
-    return endpoint_->endpoint().port();
-}
-
-//********************************************************************************
-// [NetworkNode] Methods:
-//********************************************************************************
-
-void NetworkNode::Initialize(const std::string & host, const std::string & service) {
-    tcp::resolver resolver(Network::GetIoService());
-    tcp::resolver::query query(host, service);
-    endpoint_ = resolver.resolve(query);
-}
-
-//********************************************************************************
 // [Network] Fields:
 //********************************************************************************
 
@@ -98,8 +38,13 @@ void Network::AddNode(const NetworkNode & victim) {
 //--------------------------------------------------------------------------------
 
 bool Network::ContainsNode(const NetworkNode & victim) {
-    auto end = NodesEnd();
-    return std::find(NodesBegin(), end, victim) != end;
+    return std::find(NodesBegin(), NodesEnd(), victim) != NodesEnd();
+}
+
+//--------------------------------------------------------------------------------
+
+bool Network::ContainsPriority(int victim) {
+    return FindNodeByPriority(victim) != NodesEnd();
 }
 
 //--------------------------------------------------------------------------------

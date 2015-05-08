@@ -16,39 +16,48 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "ListenProtocol.hpp"
-
-#include <iostream>
-#include <boost/asio/write.hpp>
+#include "ConnectionPool.hpp"
 
 //********************************************************************************
-// Constructors:
+// [ConnectionPool] Fields:
 //********************************************************************************
 
-ListenProtocol::ListenProtocol(SharedTcpSocket & socket) :
-    finished_(false), thread_(nullptr), socket_(socket) {}
+std::vector<ConnectionPool::SharedConnection> ConnectionPool::data_;
 
 //********************************************************************************
-// Methods:
+// [ConnectionPool] Methods:
 //********************************************************************************
 
-void ListenProtocol::Run() {
-    //TODO: Complete this method...
-    thread_ = std::make_shared<std::thread>(
-        [&] () {
-            finished_ = true;
-            //TODO: Test code...
-            auto local_ep = socket_->local_endpoint();
-            auto remote_ep = socket_->remote_endpoint();
-            std::cout << "[LOCAL] " << local_ep.address() << " : " << local_ep.port() << std::endl;
-            std::cout << "[REMOTE] " << remote_ep.address() << " : " << remote_ep.port() << std::endl;
-            //...
-            std::string message = "Hello, world!";
-            boost::system::error_code ignored_error;
-            boost::asio::write(*socket_, boost::asio::buffer(message), ignored_error);
-            //...
+void ConnectionPool::AddAndRun(SharedConnection & victim) {
+    if (victim) {
+        // Find a finished slot inside the pool:
+        bool homeless = true;
+        for (int i = 0, len = data_.size(); i < len; ++i) {
+            if (data_[i]->IsFinished()) {
+                data_[i] = victim;
+                homeless = false;
+                break;
+            }
         }
+        // If no finished slot, add a new one:
+        if (homeless) {
+            data_.push_back(victim);
+        }
+        // Run the connection thread:
+        victim->Run();
+    }
+}
+
+//--------------------------------------------------------------------------------
+
+void ConnectionPool::ClearFinished() {
+    data_.erase(
+        std::remove_if(
+            std::begin(data_), std::end(data_),
+            [] (const SharedConnection & item) {
+                return !item || item->IsFinished();
+            }
+        ),
+        std::end(data_)
     );
-    thread_->detach();
-    //...
 }

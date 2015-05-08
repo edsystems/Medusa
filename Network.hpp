@@ -19,40 +19,8 @@
 #ifndef __MEDUSA_NETWORK__
 #define __MEDUSA_NETWORK__
 
-#include <string>
 #include <vector>
-#include <cstdint>
-#include <boost/asio/ip/tcp.hpp>
-
-//********************************************************************************
-// NetworkNode:
-//********************************************************************************
-
-class NetworkNode {
-public:
-    // Types:
-    typedef boost::asio::ip::tcp tcp;
-private:
-    // Fields:
-    int priority_;
-    tcp::resolver::iterator endpoint_;
-public:
-    // Constructors:
-    NetworkNode();
-    ~NetworkNode();
-    // Operators:
-    bool operator==(const NetworkNode & rhs);
-    bool operator!=(const NetworkNode & rhs);
-    // Properties:
-    inline int GetPriority() const { return priority_; }
-    inline void SetPriority(int value) { priority_ = value; }
-    std::string GetHost() const;
-    std::string GetService() const;
-    std::string GetAddress() const;
-    uint16_t GetPort() const;
-    // Methods:
-    void Initialize(const std::string & host, const std::string & service);
-};
+#include <NetworkNode.hpp>
 
 //********************************************************************************
 // Network:
@@ -78,6 +46,7 @@ public:
     // Methods:
     static void AddNode(const NetworkNode & victim);
     static bool ContainsNode(const NetworkNode & victim);
+    static bool ContainsPriority(int victim);
     static NodeIterator FindNodeByHost(const std::string & value);
     static NodeIterator FindNodeByAddress(const std::string & value);
     static NodeIterator FindNodeByPriority(int value);

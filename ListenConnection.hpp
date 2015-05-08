@@ -16,29 +16,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#ifndef __MEDUSA_LISTEN_PROTOCOL__
-#define __MEDUSA_LISTEN_PROTOCOL__
+#ifndef __MEDUSA_LISTEN_CONNECTION__
+#define __MEDUSA_LISTEN_CONNECTION__
 
-#include <memory>
-#include <thread>
-#include <boost/asio/ip/tcp.hpp>
+#include <Connection.hpp>
 
-typedef std::shared_ptr<std::thread> SharedThread;
-typedef std::shared_ptr<boost::asio::ip::tcp::socket> SharedTcpSocket;
-
-class ListenProtocol {
-private:
-    // Fields:
-    bool finished_;
-    SharedThread thread_;
-    SharedTcpSocket socket_;
+class ListenConnection : public Connection {
 public:
     // Constructors:
-    ListenProtocol(SharedTcpSocket & socket);
-    // Properties:
-    inline bool IsFinished() const { return finished_; }
+    ListenConnection(SharedSocket & socket);
+    virtual ~ListenConnection();
     // Methods:
-    void Run();
+    virtual void Run();
 };
 
 #endif

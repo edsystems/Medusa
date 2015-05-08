@@ -16,40 +16,37 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "Utility.hpp"
+#ifndef __MEDUSA_CONNECTION_POOL__
+#define __MEDUSA_CONNECTION_POOL__
 
-#include <ctime>
-#include <limits>
+#include <vector>
+#include <Connection.hpp>
 
 //********************************************************************************
-// Functions:
+// ConnectionPool:
 //********************************************************************************
 
-bool IsPortNumber(const std::string & victim) {
-    try {
-        int value = std::stoi(victim);
-        if (0 <= value && value <= std::numeric_limits<unsigned short>::max()) {
-            return true;
-        }
-    } catch (...) {
+class ConnectionPool {
+public:
+    // Types:
+    typedef std::shared_ptr<Connection> SharedConnection;
+protected:
+    // Fields:
+    static std::vector<SharedConnection> data_;
+public:
+    // Constructors:
+    ConnectionPool() = delete;
+    ~ConnectionPool() = delete;
+    // Properties:
+    inline static int Count() { return data_.size(); }
+    // Methods:
+    static void AddAndRun(SharedConnection & victim);
+    static void ClearFinished();
+    // Templates:
+    template<class T> inline
+    static void AddAndRun(Connection::SharedSocket & socket) {
+        AddAndRun(SharedConnection(new T(socket)));
     }
-    return false;
-}
+};
 
-//--------------------------------------------------------------------------------
-
-void InitializeRandom() {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-}
-
-//--------------------------------------------------------------------------------
-
-int GetRandom(int max) {
-    return std::rand() % max;
-}
-
-//--------------------------------------------------------------------------------
-
-int GetRandom() {
-    return std::rand();
-}
+#endif

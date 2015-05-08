@@ -16,40 +16,41 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "Utility.hpp"
+#ifndef __MEDUSA_NETWORK_NODE__
+#define __MEDUSA_NETWORK_NODE__
 
-#include <ctime>
-#include <limits>
+#include <string>
+#include <cstdint>
+#include <boost/asio/ip/tcp.hpp>
 
 //********************************************************************************
-// Functions:
+// NetworkNode:
 //********************************************************************************
 
-bool IsPortNumber(const std::string & victim) {
-    try {
-        int value = std::stoi(victim);
-        if (0 <= value && value <= std::numeric_limits<unsigned short>::max()) {
-            return true;
-        }
-    } catch (...) {
-    }
-    return false;
-}
+class NetworkNode {
+public:
+    // Types:
+    typedef boost::asio::ip::tcp tcp;
+private:
+    // Fields:
+    int priority_;
+    tcp::resolver::iterator endpoint_;
+public:
+    // Constructors:
+    NetworkNode();
+    ~NetworkNode();
+    // Operators:
+    bool operator==(const NetworkNode & rhs);
+    bool operator!=(const NetworkNode & rhs);
+    // Properties:
+    inline int GetPriority() const { return priority_; }
+    inline void SetPriority(int value) { priority_ = value; }
+    std::string GetHost() const;
+    std::string GetService() const;
+    std::string GetAddress() const;
+    uint16_t GetPort() const;
+    // Methods:
+    void Initialize(const std::string & host, const std::string & service);
+};
 
-//--------------------------------------------------------------------------------
-
-void InitializeRandom() {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-}
-
-//--------------------------------------------------------------------------------
-
-int GetRandom(int max) {
-    return std::rand() % max;
-}
-
-//--------------------------------------------------------------------------------
-
-int GetRandom() {
-    return std::rand();
-}
+#endif

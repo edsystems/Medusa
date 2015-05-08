@@ -24,6 +24,10 @@
 #include <cstdint>
 #include <boost/asio/ip/tcp.hpp>
 
+//********************************************************************************
+// Connection:
+//********************************************************************************
+
 class Connection {
 public:
     // Types:
@@ -48,6 +52,7 @@ public:
     uint16_t GetRemotePort() const;
     // Methods:
     virtual void Run() = 0;
+    static SharedSocket MakeSharedSocket();
 };
 
 #endif

@@ -16,40 +16,35 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "Utility.hpp"
+#ifndef __MEDUSA_SERVER__
+#define __MEDUSA_SERVER__
 
-#include <ctime>
-#include <limits>
+#include <string>
+#include <cstdint>
 
 //********************************************************************************
-// Functions:
+// Server:
 //********************************************************************************
 
-bool IsPortNumber(const std::string & victim) {
-    try {
-        int value = std::stoi(victim);
-        if (0 <= value && value <= std::numeric_limits<unsigned short>::max()) {
-            return true;
-        }
-    } catch (...) {
-    }
-    return false;
-}
+class Server {
+public:
+    // Constants:
+    static const std::string LOCAL_HOST;
+private:
+    // Fields:
+    static uint16_t port_;
+    // Methods:
+    static void loadServers(const std::string & path);
+public:
+    // Constructors:
+    Server() = delete;
+    ~Server() = delete;
+    // Properties:
+    inline static uint16_t GetPort() { return port_; }
+    // Methods:
+    static bool Initialize();
+    static int GetNotUsedPriority();
+    static void Run();
+};
 
-//--------------------------------------------------------------------------------
-
-void InitializeRandom() {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-}
-
-//--------------------------------------------------------------------------------
-
-int GetRandom(int max) {
-    return std::rand() % max;
-}
-
-//--------------------------------------------------------------------------------
-
-int GetRandom() {
-    return std::rand();
-}
+#endif

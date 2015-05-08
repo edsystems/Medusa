@@ -16,51 +16,66 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "Connection.hpp"
+#include "NetworkNode.hpp"
 
 #include <Network.hpp>
 
 //********************************************************************************
-// [Connection] Constructors:
+// [NetworkNode] Constructors:
 //********************************************************************************
 
-Connection::Connection(SharedSocket & socket) :
-    finished_(false), thread_(nullptr), socket_(socket) {}
+NetworkNode::NetworkNode() : priority_(-1), endpoint_() {}
 
 //--------------------------------------------------------------------------------
 
-Connection::~Connection() {}
+NetworkNode::~NetworkNode() {}
 
 //********************************************************************************
-// [Connection] Properties:
+// [NetworkNode] Operators:
 //********************************************************************************
 
-std::string Connection::GetLocalAddress() const {
-    return socket_->local_endpoint().address().to_string();
+bool NetworkNode::operator==(const NetworkNode & rhs) {
+    return endpoint_ == rhs.endpoint_;
 }
 
 //--------------------------------------------------------------------------------
 
-std::string Connection::GetRemoteAddress() const {
-    return socket_->remote_endpoint().address().to_string();
+bool NetworkNode::operator!=(const NetworkNode & rhs) {
+    return endpoint_ != rhs.endpoint_;
+}
+
+//********************************************************************************
+// [NetworkNode] Properties:
+//********************************************************************************
+
+std::string NetworkNode::GetHost() const {
+    return endpoint_->host_name();
 }
 
 //--------------------------------------------------------------------------------
 
-uint16_t Connection::GetLocalPort() const {
-    return socket_->local_endpoint().port();
+std::string NetworkNode::GetService() const {
+    return endpoint_->service_name();
 }
 
 //--------------------------------------------------------------------------------
 
-uint16_t Connection::GetRemotePort() const {
-    return socket_->remote_endpoint().port();
+std::string NetworkNode::GetAddress() const {
+    return endpoint_->endpoint().address().to_string();
+}
+
+//--------------------------------------------------------------------------------
+
+uint16_t NetworkNode::GetPort() const {
+    return endpoint_->endpoint().port();
 }
 
 //********************************************************************************
-// [Connection] Methods:
+// [NetworkNode] Methods:
 //********************************************************************************
 
-Connection::SharedSocket Connection::MakeSharedSocket() {
-    return std::make_shared<boost::asio::ip::tcp::socket>(Network::GetIoService());
+void NetworkNode::Initialize(const std::string & host, const std::string & service) {
+    tcp::resolver resolver(Network::GetIoService());
+    tcp::resolver::query query(host, service);
+    endpoint_ = resolver.resolve(query);
 }
