@@ -22,6 +22,8 @@
 #include <sstream>
 #include <iostream>
 #include <boost/asio/ip/tcp.hpp>
+#include <ListenConnection.hpp>
+#include <ConnectionPool.hpp>
 #include <Network.hpp>
 #include <Options.hpp>
 #include <Utility.hpp>
@@ -113,8 +115,16 @@ int Server::GetNotUsedPriority() {
 
 void Server::Run() {
     try {
-        //TODO: Complete this code...
-        //...
+        // Initialize the node acceptor socket:
+        tcp::acceptor acceptor(Network::GetIoService(), tcp::endpoint(tcp::v4(), Server::GetPort()));
+        // Main loop of the server:
+        while (true) {
+            // Accept a connection from outside:
+            auto socket = Connection::MakeSharedSocket();
+            acceptor.accept(*socket);
+            // Create a new thread with the listen protocol:
+            ConnectionPool::AddAndRun<ListenConnection>(socket);
+        }
     } catch (std::exception & e) {
         std::cerr << "[Server::Run] catch => std::exception" << std::endl;
         std::cerr << "[WHAT] " << e.what() << std::endl;

@@ -21,8 +21,6 @@
 #include <Options.hpp>
 #include <Utility.hpp>
 
-void BoostTest(int argc, char ** argv);
-
 int main(int argc, char ** argv) {
     Options::Parse(argc, argv);
     if (Options::Get(Options::HelpKey) == Options::HELP_YES) {

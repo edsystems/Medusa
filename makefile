@@ -12,7 +12,6 @@ SOURCES = main.cpp \
           boostimp.cpp \
           Connection.cpp \
           ConnectionPool.cpp \
-          CoreManager.cpp \
           ListenConnection.cpp \
           Network.cpp \
           NetworkNode.cpp \
