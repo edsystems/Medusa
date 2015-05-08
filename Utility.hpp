@@ -22,5 +22,7 @@
 #include <string>
 
 bool IsPortNumber(const std::string & victim);
+void InitializeRandom();
+int GetRandom(int max);
 
 #endif

@@ -23,24 +23,35 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <ListenProtocol.hpp>
 
 class CoreManager {
 public:
     // Types:
-    struct Partner {
-        std::string address, port;
-        Partner(const std::string & ad, const std::string & po) :
-            address(ad), port(po) {}
+    struct Node {
+        std::string address, port; int priority;
+        Node(const std::string & ad, const std::string & po) :
+            address(ad), port(po), priority(-1) {}
     };
+    // Constants:
+    static const std::string LOCAL_HOST;
+    static const int MAX_PRIORITY;
 private:
+    // Types:
+    typedef std::vector<Node>::iterator NodeIterator;
     // Singleton:
     CoreManager();
     static std::unique_ptr<CoreManager> instance_;
     // Fields:
     uint16_t listenPort_;
-    std::vector<Partner> partners_;
+    std::vector<Node> nodes_;
+    std::vector<ListenProtocol> listenPool_;
     // Methods:
     void loadConfiguration(const std::string & path);
+    ListenProtocol & addListenThread(SharedTcpSocket & socket);
+    NodeIterator findNode(const std::string & address);
+    int getRandomPriority();
+    void chooseLeader();
 public:
     // Singleton:
     ~CoreManager();
@@ -48,12 +59,11 @@ public:
     static CoreManager & Reference();
     // Properties:
     inline uint16_t GetListenPort() { return listenPort_; }
-    inline std::vector<Partner> & GetPartners() { return partners_; }
-    // Methods:
+    inline std::vector<Node> & GetNodes() { return nodes_; }
     inline std::string GetListenPortAsString() const {
         return std::to_string(listenPort_);
     }
-    void Initialize();
+    // Methods:
     void Run();
 };
 

@@ -26,19 +26,16 @@
 // Constants:
 //********************************************************************************
 
-const std::string Options::HELP_KEY("help");
 const std::string Options::HELP_NO("no");
 const std::string Options::HELP_YES("yes");
-const std::string Options::PORT_NUMBER_KEY("port");
 const std::string Options::PORT_NUMBER_VAL("3074");
-const std::string Options::CONFIG_FILE_KEY("config");
 const std::string Options::CONFIG_FILE_VAL("medusa.cfg");
 
 //********************************************************************************
 // Fields:
 //********************************************************************************
 
-std::map<std::string, std::string> Options::data_;
+std::map<Options::Key, std::string> Options::data_;
 
 //********************************************************************************
 // Methods:
@@ -47,9 +44,9 @@ std::map<std::string, std::string> Options::data_;
 void Options::Parse(int argc, char ** argv) {
     // Initialization of the options data:
     data_.clear();
-    data_[HELP_KEY] = HELP_NO;
-    data_[PORT_NUMBER_KEY] = PORT_NUMBER_VAL;
-    data_[CONFIG_FILE_KEY] = CONFIG_FILE_VAL;
+    data_[HelpKey] = HELP_NO;
+    data_[PortNumberKey] = PORT_NUMBER_VAL;
+    data_[ConfigFileKey] = CONFIG_FILE_VAL;
     // Parse the command arguments:
     for (int i = 0; i < argc; ++i) {
         std::string item(argv[i]);
@@ -59,7 +56,7 @@ void Options::Parse(int argc, char ** argv) {
             if (i < argc) {
                 std::string value(argv[i]);
                 if (IsPortNumber(value)) {
-                    data_[PORT_NUMBER_KEY] = value;
+                    data_[PortNumberKey] = value;
                 }
             }
         } else if (item == "-c" || item == "--config") {
@@ -67,21 +64,21 @@ void Options::Parse(int argc, char ** argv) {
             ++i;
             if (i < argc) {
                 std::string value(argv[i]);
-                data_[CONFIG_FILE_KEY] = value;
+                data_[ConfigFileKey] = value;
             }
         } else if (item == "-h" || item == "--help") {
             // Check the help option:
-            data_[HELP_KEY] = HELP_YES;
+            data_[HelpKey] = HELP_YES;
         }
     }
 }
 
 //--------------------------------------------------------------------------------
 
-const std::string & Options::Get(const std::string & key) {
+const std::string & Options::Get(Key key) {
     if (data_.count(key)) {
         return data_[key];
     } else {
-        throw std::exception("Options::Get -> Invalid key!");
+        throw std::exception("[Options::Get] Invalid key!");
     }
 }

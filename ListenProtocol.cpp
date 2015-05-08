@@ -16,34 +16,33 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "Utility.hpp"
+#include "ListenProtocol.hpp"
 
-#include <ctime>
-#include <limits>
+#include <boost/asio/write.hpp>
 
 //********************************************************************************
-// Functions:
+// Constructors:
 //********************************************************************************
 
-bool IsPortNumber(const std::string & victim) {
-    try {
-        int value = std::stoi(victim);
-        if (0 <= value && value <= std::numeric_limits<unsigned short>::max()) {
-            return true;
+ListenProtocol::ListenProtocol(SharedTcpSocket & socket) :
+    finished_(false), thread_(nullptr), socket_(socket) {}
+
+//********************************************************************************
+// Methods:
+//********************************************************************************
+
+void ListenProtocol::Run() {
+    //TODO: Complete this method...
+    thread_ = std::make_shared<std::thread>(
+        [&] () {
+            finished_ = true;
+            //TODO: Test code...
+            std::string message = "Hello, world!";
+            boost::system::error_code ignored_error;
+            boost::asio::write(*socket_, boost::asio::buffer(message), ignored_error);
+            //...
         }
-    } catch (...) {
-    }
-    return false;
-}
-
-//--------------------------------------------------------------------------------
-
-void InitializeRandom() {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-}
-
-//--------------------------------------------------------------------------------
-
-int GetRandom(int max) {
-    return std::rand() % max;
+    );
+    thread_->detach();
+    //...
 }

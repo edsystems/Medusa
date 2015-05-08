@@ -23,21 +23,21 @@
 #include <string>
 
 class Options {
+public:
+    // Types:
+    enum Key { HelpKey, PortNumberKey, ConfigFileKey };
 private:
     // Fields:
-    static std::map<std::string, std::string> data_;
+    static std::map<Key, std::string> data_;
 public:
     // Constants:
-    static const std::string HELP_KEY;
     static const std::string HELP_NO;
     static const std::string HELP_YES;
-    static const std::string PORT_NUMBER_KEY;
     static const std::string PORT_NUMBER_VAL;
-    static const std::string CONFIG_FILE_KEY;
     static const std::string CONFIG_FILE_VAL;
     // Methods:
     static void Parse(int argc, char ** argv);
-    static const std::string & Get(const std::string & key);
+    static const std::string & Get(Key key);
 };
 
 #endif

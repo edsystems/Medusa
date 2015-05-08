@@ -16,34 +16,29 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "Utility.hpp"
+#ifndef __MEDUSA_LISTEN_PROTOCOL__
+#define __MEDUSA_LISTEN_PROTOCOL__
 
-#include <ctime>
-#include <limits>
+#include <thread>
+#include <memory>
+#include <boost/asio/ip/tcp.hpp>
 
-//********************************************************************************
-// Functions:
-//********************************************************************************
+typedef std::shared_ptr<std::thread> SharedThread;
+typedef std::shared_ptr<boost::asio::ip::tcp::socket> SharedTcpSocket;
 
-bool IsPortNumber(const std::string & victim) {
-    try {
-        int value = std::stoi(victim);
-        if (0 <= value && value <= std::numeric_limits<unsigned short>::max()) {
-            return true;
-        }
-    } catch (...) {
-    }
-    return false;
-}
+class ListenProtocol {
+private:
+    // Fields:
+    bool finished_;
+    SharedThread thread_;
+    SharedTcpSocket socket_;
+public:
+    // Constructors:
+    ListenProtocol(SharedTcpSocket & socket);
+    // Properties:
+    inline bool IsFinished() const { return finished_; }
+    // Methods:
+    void Run();
+};
 
-//--------------------------------------------------------------------------------
-
-void InitializeRandom() {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-}
-
-//--------------------------------------------------------------------------------
-
-int GetRandom(int max) {
-    return std::rand() % max;
-}
+#endif

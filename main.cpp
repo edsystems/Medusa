@@ -17,21 +17,21 @@
 //********************************************************************************
 
 #include <iostream>
-#include <Options.hpp>
 #include <CoreManager.hpp>
+#include <Options.hpp>
+#include <Utility.hpp>
 
 int main(int argc, char ** argv) {
     Options::Parse(argc, argv);
-    if (Options::Get(Options::HELP_KEY) == Options::HELP_YES) {
+    if (Options::Get(Options::HelpKey) == Options::HELP_YES) {
         std::cout << "medusa [options]" << std::endl;
         std::cout << "\t--port   port => Changes the port of" << std::endl;
         std::cout << "\t -p      port    the server." << std::endl;
         std::cout << "\t--config path => The file to load with" << std::endl;
         std::cout << "\t -c      path    the configuration." << std::endl;
     } else {
-        auto & core = CoreManager::Reference();
-        core.Initialize();
-        core.Run();
+        InitializeRandom();
+        CoreManager::Instance()->Run();
     }
     return 0;
 }

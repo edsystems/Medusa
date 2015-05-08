@@ -11,6 +11,7 @@ LFLAGS  = $(FLAGS) -lpthread
 SOURCES = main.cpp \
           boostimp.cpp \
           CoreManager.cpp \
+          ListenProtocol.cpp \
           Options.cpp \
           Utility.cpp
 _OBJS   = $(SOURCES:.cpp=.o)
