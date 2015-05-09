@@ -13,6 +13,7 @@ SOURCES = main.cpp \
           Connection.cpp \
           ConnectionPool.cpp \
           ListenConnection.cpp \
+          Message.cpp \
           Network.cpp \
           NetworkNode.cpp \
           Options.cpp \

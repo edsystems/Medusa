@@ -20,9 +20,11 @@
 
 #include <iostream>
 #include <boost/asio/write.hpp>
+#include <boost/array.hpp>
+#include <Message.hpp>
 
 //********************************************************************************
-// Constructors:
+// [ListenConnection] Constructors:
 //********************************************************************************
 
 ListenConnection::ListenConnection(SharedSocket & socket) :
@@ -33,27 +35,53 @@ ListenConnection::ListenConnection(SharedSocket & socket) :
 ListenConnection::~ListenConnection() {}
 
 //********************************************************************************
-// Methods:
+// [ListenConnection] Methods:
 //********************************************************************************
 
-void ListenConnection::Run() {
+void ListenConnection::process(int8_t * buffer, size_t len) {
     //TODO: Complete this method...
+    switch (*buffer) {
+    case Message::JOB_REQUEST_ID:
+        if (sizeof(Message::JobRequest) == len) {
+            auto * jrm = (Message::JobRequest *)buffer;
+            //...
+        } else {
+            throw std::exception("[ListenConnection::process] Invalid JobRequestMessage size!");
+        }
+        //...
+        break;
+    }
+    //...
+}
+
+//--------------------------------------------------------------------------------
+
+void ListenConnection::Run() {
     thread_ = std::make_shared<std::thread>(
         [&] () {
-            //TODO: Test code...
-            auto local_ep = socket_->local_endpoint();
-            auto remote_ep = socket_->remote_endpoint();
-            std::cout << "[LOCAL] " << local_ep.address() << " : " << local_ep.port() << std::endl;
-            std::cout << "[REMOTE] " << remote_ep.address() << " : " << remote_ep.port() << std::endl;
-            //...
-            std::string message = "Hello, world!";
-            boost::system::error_code ignored_error;
-            boost::asio::write(*socket_, boost::asio::buffer(message), ignored_error);
-            socket_->close();
-            //...
+            try {
+                bool notExit = true;
+                boost::system::error_code error;
+                boost::array<int8_t, Message::MAX_SIZE> buffer;
+                auto socketBuffer = boost::asio::buffer(buffer);
+                while (notExit) {
+                    size_t len = socket_->read_some(socketBuffer, error);
+                    if (error == boost::asio::error::eof) {
+                        finished_ = true;
+                        return;
+                    } else if (error) {
+                        throw boost::system::system_error(error);
+                    } else {
+                        process(buffer.c_array(), len);
+                    }
+                }
+                socket_->close();
+            } catch (std::exception & e) {
+                std::cerr << "[ListenConnection::Run] catch => std::exception" << std::endl;
+                std::cerr << "[WHAT] " << e.what() << std::endl;
+            }
             finished_ = true;
         }
     );
     thread_->detach();
-    //...
 }

@@ -16,25 +16,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#ifndef __MEDUSA_LISTEN_CONNECTION__
-#define __MEDUSA_LISTEN_CONNECTION__
-
-#include <Connection.hpp>
+#include "Message.hpp"
 
 //********************************************************************************
-// ListenConnection:
+// [Message] Methods:
 //********************************************************************************
 
-class ListenConnection : public Connection {
-protected:
-    // Methods:
-    void process(int8_t * buffer, size_t len);
-public:
-    // Constructors:
-    ListenConnection(SharedSocket & socket);
-    virtual ~ListenConnection();
-    // Methods:
-    virtual void Run();
-};
-
-#endif
+bool Message::BuildJobRequest(JobRequest & victim, const std::string & fileExt,
+    int32_t fileSize, int16_t filterId) {
+    if (fileExt.length() < MAX_FILE_EXTENSION_SIZE - 1) {
+        victim.code = JOB_REQUEST_ID;
+        std::memcpy(victim.fileExtension, fileExt.c_str(), fileExt.length() + 1);
+        victim.fileSize = fileSize;
+        victim.filterId = filterId;
+        return true;
+    } else {
+        return false;
+    }
+}
