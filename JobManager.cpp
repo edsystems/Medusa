@@ -16,37 +16,36 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#ifndef __MEDUSA_CONNECTION_POOL__
-#define __MEDUSA_CONNECTION_POOL__
+#include "JobManager.hpp"
 
-#include <vector>
-#include <Connection.hpp>
+#include <algorithm>
 
 //********************************************************************************
-// ConnectionPool:
+// [JobManager] Methods:
 //********************************************************************************
 
-class ConnectionPool {
-public:
-    // Types:
-    typedef std::shared_ptr<Connection> SharedConnection;
-protected:
-    // Fields:
-    static std::vector<SharedConnection> data_;
-public:
-    // Constructors:
-    ConnectionPool() = delete;
-    ~ConnectionPool() = delete;
-    // Properties:
-    inline static int Count() { return data_.size(); }
-    // Methods:
-    static void AddAndRun(SharedConnection & victim);
-    static void ClearFinished();
-    // Templates:
-    template<typename T> inline
-    static void AddAndRun(Connection::SharedSocket & socket) {
-        AddAndRun(SharedConnection(new T(socket)));
+bool JobManager::ValidateFileExtension(const std::string & value) {
+    auto victim = value;
+    std::transform(std::begin(victim), std::end(victim), std::begin(victim), ::tolower);
+    return victim == "png" || victim == "jpg" || victim == "jpeg";
+}
+
+//--------------------------------------------------------------------------------
+
+bool JobManager::ValidateFilterId(int16_t value) {
+    //TODO: Complete this method...
+    return true;
+    //...
+}
+
+//--------------------------------------------------------------------------------
+
+int16_t JobManager::ValidateRequest(const Message::JobRequest & msg) {
+    if (!ValidateFileExtension(std::string(msg.fileExtension))) {
+        return Message::ERROR_CODE_WRONG_EXTENSION;
+    } else if (!ValidateFilterId(msg.filterId)) {
+        return Message::ERROR_CODE_WRONG_FILTER;
+    } else {
+        return Message::ERROR_CODE_NOTHING_WRONG;
     }
-};
-
-#endif
+}

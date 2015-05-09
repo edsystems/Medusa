@@ -16,37 +16,27 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#ifndef __MEDUSA_CONNECTION_POOL__
-#define __MEDUSA_CONNECTION_POOL__
+#ifndef __MEDUSA_JOB_MANAGER__
+#define __MEDUSA_JOB_MANAGER__
 
+#include <mutex>
 #include <vector>
-#include <Connection.hpp>
+#include <Message.hpp>
 
-//********************************************************************************
-// ConnectionPool:
-//********************************************************************************
-
-class ConnectionPool {
-public:
-    // Types:
-    typedef std::shared_ptr<Connection> SharedConnection;
-protected:
+class JobManager {
+private:
     // Fields:
-    static std::vector<SharedConnection> data_;
+    static std::mutex mutex_;
 public:
     // Constructors:
-    ConnectionPool() = delete;
-    ~ConnectionPool() = delete;
+    JobManager() = delete;
+    ~JobManager() = delete;
     // Properties:
-    inline static int Count() { return data_.size(); }
     // Methods:
-    static void AddAndRun(SharedConnection & victim);
-    static void ClearFinished();
-    // Templates:
-    template<typename T> inline
-    static void AddAndRun(Connection::SharedSocket & socket) {
-        AddAndRun(SharedConnection(new T(socket)));
-    }
+    static bool ValidateFileExtension(const std::string & value);
+    static bool ValidateFilterId(int16_t value);
+    static int16_t ValidateRequest(const Message::JobRequest & msg);
+    static void AddRequest(const std::string & address, const Message::JobRequest & msg);
 };
 
 #endif

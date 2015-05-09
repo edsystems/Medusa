@@ -21,7 +21,7 @@
 #include <iostream>
 #include <boost/asio/write.hpp>
 #include <boost/array.hpp>
-#include <Message.hpp>
+#include <JobManager.hpp>
 
 //********************************************************************************
 // [ListenConnection] Constructors:
@@ -43,12 +43,16 @@ void ListenConnection::process(int8_t * buffer, size_t len) {
     switch (*buffer) {
     case Message::JOB_REQUEST_ID:
         if (sizeof(Message::JobRequest) == len) {
-            auto * jrm = (Message::JobRequest *)buffer;
-            //...
+            auto * msg = (Message::JobRequest *)buffer;
+            auto errorCode = JobManager::ValidateRequest(*msg);
+            if (errorCode == Message::ERROR_CODE_NOTHING_WRONG) {
+                //...
+            } else {
+                Message::SendErrorResponse(socket_.get(), errorCode);
+            }
         } else {
-            throw std::exception("[ListenConnection::process] Invalid JobRequestMessage size!");
+            throw std::exception("[ListenConnection::process] Invalid JobRequest size!");
         }
-        //...
         break;
     }
     //...

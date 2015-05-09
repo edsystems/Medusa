@@ -21,6 +21,7 @@
 
 #include <string>
 #include <cstdint>
+#include <boost/asio/ip/tcp.hpp>
 
 //********************************************************************************
 // Message:
@@ -34,18 +35,22 @@ public:
 
     // Constants:
     static const int MAX_SIZE                = 1024;
-    static const int MAX_FILE_EXTENSION_SIZE = 16;
     static const int MAX_FRAGMENT_SIZE       = 1000;
+    static const int MAX_FILE_EXTENSION_SIZE = 16;
+    static const int MAX_DIGEST_SIZE         = 5;
 
+    static const int8_t INVALID_ID           = 0;
     static const int8_t JOB_REQUEST_ID       = 1;
-    static const int8_t RECONNECT_REQUEST_ID = 2;
-    static const int8_t SEND_FRAGMENT_ID     = 3;
-    static const int8_t JOB_ACCEPTED_ID      = 4;
-    static const int8_t JOB_FINISHED_ID      = 5;
-    //static const int8_t TASK_REQUEST_ID      = 6;
+    static const int8_t JOB_ACCEPTED_ID      = 2;
+    static const int8_t RECONNECT_REQUEST_ID = 3;
+    static const int8_t SEND_FRAGMENT_ID     = 4;
+    static const int8_t FRAGMENT_RECEIVED_ID = 5;
+    static const int8_t JOB_STARTED_ID       = 6;
+    static const int8_t JOB_FINISHED_ID      = 7;
+    //static const int8_t TASK_REQUEST_ID      = 8;
     static const int8_t ERROR_RESPONSE_ID    = 101;
 
-    static const int16_t ERROR_CODE_ANYTHING        = 0;
+    static const int16_t ERROR_CODE_NOTHING_WRONG   = 0;
     static const int16_t ERROR_CODE_WRONG_EXTENSION = 1;
     static const int16_t ERROR_CODE_WRONG_FILTER    = 2;
     static const int16_t ERROR_CODE_WRONG_PARAMS    = 3;
@@ -54,6 +59,8 @@ public:
     //static const int16_t ERROR_CODE_ = 0;
 
     // Types:
+    typedef boost::asio::ip::tcp::socket Socket;
+
     struct Generic {
         int8_t code;
     };
@@ -65,20 +72,20 @@ public:
         int16_t filterId;
     };
 
+    struct JobAccepted {
+        int8_t code;
+        uint32_t jobId[MAX_DIGEST_SIZE];
+    };
+
     struct ReconnectRequest {
         int8_t code;
-        int64_t jobId;
+        uint32_t jobId[MAX_DIGEST_SIZE];
     };
 
     struct SendFragment {
         int8_t code;
         int32_t fragmentNumber;
         char fragmentData[MAX_FRAGMENT_SIZE];
-    };
-
-    struct JobAccepted {
-        int8_t code;
-        int64_t jobId;
     };
 
     struct JobFinished {
@@ -96,7 +103,12 @@ public:
     };
 
     // Methods:
-    static bool BuildJobRequest(JobRequest & victim, const std::string & fileExt, int32_t fileSize, int16_t filterId);
+    static void BuildJobRequest(JobRequest & victim, const std::string & fileExt, int32_t fileSize, int16_t filterId);
+    //...
+    static void BuildErrorResponse(ErrorResponse & victim, int16_t errorCode);
+    static bool SendJobRequest(Socket * socket, const std::string & fileExt, int32_t fileSize, int16_t filterId);
+    //...
+    static bool SendErrorResponse(Socket * socket, int16_t errorCode);
 };
 
 #endif
