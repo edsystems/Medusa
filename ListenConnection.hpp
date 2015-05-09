@@ -28,7 +28,7 @@
 class ListenConnection : public Connection {
 protected:
     // Methods:
-    void process(int8_t * buffer, size_t len);
+    void process(int8_t * buffer, size_t length);
 public:
     // Constructors:
     ListenConnection(SharedSocket & socket);

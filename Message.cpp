@@ -25,7 +25,7 @@
 //********************************************************************************
 
 template <typename T> inline
-bool SendMessage(Message::Socket * socket, T & message) {
+bool SendMessageWithBoost(Message::Socket * socket, T & message) {
     boost::system::error_code systemError;
     auto buffer = boost::asio::buffer(&message, sizeof(T));
     boost::asio::write(*socket, buffer, systemError);
@@ -51,6 +51,59 @@ void Message::BuildJobRequest(JobRequest & victim, const std::string & fileExt,
 
 //--------------------------------------------------------------------------------
 
+void Message::BuildJobAccepted(JobAccepted & victim,
+    const uint32_t jobId[DIGEST_SIZE]) {
+    victim.code = JOB_ACCEPTED_ID;
+    std::memcpy(victim.jobId, jobId, DIGEST_SIZE);
+}
+
+//--------------------------------------------------------------------------------
+
+void Message::BuildReconnectRequest(ReconnectRequest & victim,
+    const uint32_t jobId[DIGEST_SIZE]) {
+    victim.code = RECONNECT_REQUEST_ID;
+    std::memcpy(victim.jobId, jobId, DIGEST_SIZE);
+}
+
+//--------------------------------------------------------------------------------
+
+void Message::BuildSendFragment(SendFragment & victim, int32_t number,
+    const char * data, size_t length) {
+    if (length <= MAX_FRAGMENT_SIZE) {
+        victim.code = SEND_FRAGMENT_ID;
+        victim.fragmentNumber = number;
+        std::memcpy(victim.fragmentData, data, length);
+        victim.fragmentDataSize = length;
+    } else {
+        victim.code = INVALID_ID;
+    }
+}
+
+//--------------------------------------------------------------------------------
+
+void Message::BuildJobStarted(JobStarted & victim) {
+    victim.code = JOB_STARTED_ID;
+}
+
+//--------------------------------------------------------------------------------
+
+void Message::BuildJobFinished(JobFinished & victim, const std::string & fileExt,
+    int32_t fileSize, int16_t filterId) {
+    auto fileExtLength = fileExt.length() + 1;
+    if (fileExtLength < MAX_FILE_EXTENSION_SIZE) {
+        victim.code = JOB_FINISHED_ID;
+        std::memcpy(victim.fileExtension, fileExt.c_str(), fileExtLength);
+        victim.fileSize = fileSize;
+        victim.filterId = filterId;
+    } else {
+        victim.code = INVALID_ID;
+    }
+}
+
+//--------------------------------------------------------------------------------
+
+//...
+
 //--------------------------------------------------------------------------------
 
 void Message::BuildErrorResponse(ErrorResponse & victim, int16_t errorCode) {
@@ -71,10 +124,69 @@ bool Message::SendJobRequest(Socket * socket, const std::string & fileExt,
     BuildJobRequest(message, fileExt, fileSize, filterId);
     if (message.code != JOB_REQUEST_ID) return false;
     // Send the message:
-    return SendMessage(socket, message);
+    return SendMessageWithBoost(socket, message);
 }
 
 //--------------------------------------------------------------------------------
+
+bool Message::SendJobAccepted(Socket * socket, const uint32_t jobId[DIGEST_SIZE]) {
+    // Make the message:
+    JobAccepted message;
+    BuildJobAccepted(message, jobId);
+    if (message.code != JOB_ACCEPTED_ID) return false;
+    // Send the message:
+    return SendMessageWithBoost(socket, message);
+}
+
+//--------------------------------------------------------------------------------
+
+bool Message::SendReconnectRequest(Socket * socket, const uint32_t jobId[DIGEST_SIZE]) {
+    // Make the message:
+    ReconnectRequest message;
+    BuildReconnectRequest(message, jobId);
+    if (message.code != RECONNECT_REQUEST_ID) return false;
+    // Send the message:
+    return SendMessageWithBoost(socket, message);
+}
+
+//--------------------------------------------------------------------------------
+
+bool Message::SendSendFragment(Socket * socket, int32_t number,
+    const char * data, size_t length) {
+    // Make the message:
+    SendFragment message;
+    BuildSendFragment(message, number, data, length);
+    if (message.code != SEND_FRAGMENT_ID) return false;
+    // Send the message:
+    return SendMessageWithBoost(socket, message);
+}
+
+//--------------------------------------------------------------------------------
+
+bool Message::SendJobStarted(Socket * socket) {
+    // Make the message:
+    JobStarted message;
+    BuildJobStarted(message);
+    if (message.code != JOB_STARTED_ID) return false;
+    // Send the message:
+    return SendMessageWithBoost(socket, message);
+}
+
+//--------------------------------------------------------------------------------
+
+bool Message::SendJobFinished(Socket * socket, const std::string & fileExt,
+    int32_t fileSize, int16_t filterId) {
+    // Make the message:
+    JobFinished message;
+    BuildJobFinished(message, fileExt, fileSize, filterId);
+    if (message.code != JOB_FINISHED_ID) return false;
+    // Send the message:
+    return SendMessageWithBoost(socket, message);
+}
+
+//--------------------------------------------------------------------------------
+
+//...
 
 //--------------------------------------------------------------------------------
 
@@ -84,5 +196,5 @@ bool Message::SendErrorResponse(Socket * socket, int16_t errorCode) {
     BuildErrorResponse(message, errorCode);
     if (message.code != ERROR_RESPONSE_ID) return false;
     // Send the message:
-    return SendMessage(socket, message);
+    return SendMessageWithBoost(socket, message);
 }

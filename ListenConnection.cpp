@@ -38,11 +38,11 @@ ListenConnection::~ListenConnection() {}
 // [ListenConnection] Methods:
 //********************************************************************************
 
-void ListenConnection::process(int8_t * buffer, size_t len) {
+void ListenConnection::process(int8_t * buffer, size_t length) {
     //TODO: Complete this method...
     switch (*buffer) {
     case Message::JOB_REQUEST_ID:
-        if (sizeof(Message::JobRequest) == len) {
+        if (sizeof(Message::JobRequest) == length) {
             auto * msg = (Message::JobRequest *)buffer;
             auto errorCode = JobManager::ValidateRequest(*msg);
             if (errorCode == Message::ERROR_CODE_NOTHING_WRONG) {
@@ -69,14 +69,14 @@ void ListenConnection::Run() {
                 boost::array<int8_t, Message::MAX_SIZE> buffer;
                 auto socketBuffer = boost::asio::buffer(buffer);
                 while (notExit) {
-                    size_t len = socket_->read_some(socketBuffer, error);
+                    size_t length = socket_->read_some(socketBuffer, error);
                     if (error == boost::asio::error::eof) {
                         finished_ = true;
                         return;
                     } else if (error) {
                         throw boost::system::system_error(error);
                     } else {
-                        process(buffer.c_array(), len);
+                        process(buffer.c_array(), length);
                     }
                 }
                 socket_->close();
