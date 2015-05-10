@@ -37,13 +37,19 @@ JobIdentifier::JobIdentifier() {
 
 //--------------------------------------------------------------------------------
 
-JobIdentifier::JobIdentifier(DigestArrayParam hash) {
+JobIdentifier::JobIdentifier(const DigestArrayParam hash) {
     std::memcpy(hash_, hash, sizeof(DigestArray));
 }
 
 //--------------------------------------------------------------------------------
 
 JobIdentifier::~JobIdentifier() {}
+
+//--------------------------------------------------------------------------------
+
+bool JobIdentifier::operator==(const JobIdentifier & rhs) {
+    return Equals(rhs);
+}
 
 //********************************************************************************
 // [JobIdentifier] Properties:
@@ -57,7 +63,13 @@ void JobIdentifier::GetHash(DigestArrayParam hash) const {
 // [JobIdentifier] Methods:
 //********************************************************************************
 
-bool JobIdentifier::Equals(DigestArrayParam hash) const {
+bool JobIdentifier::Equals(const JobIdentifier & rhs) const {
+    return std::memcmp(rhs.hash_, hash_, sizeof(DigestArray)) == 0;
+}
+
+//--------------------------------------------------------------------------------
+
+bool JobIdentifier::Equals(const DigestArrayParam hash) const {
     return std::memcmp(hash, hash_, sizeof(DigestArray)) == 0;
 }
 

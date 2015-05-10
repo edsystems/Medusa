@@ -35,13 +35,15 @@ private:
 public:
     // Constructors:
     JobIdentifier();
-    JobIdentifier(DigestArrayParam hash);
+    JobIdentifier(const DigestArrayParam hash);
     ~JobIdentifier();
+    bool operator==(const JobIdentifier & rhs);
     // Properties:
     inline const uint32_t * GetHash() const { return hash_; }
     void GetHash(DigestArrayParam hash) const;
     // Methods:
-    bool Equals(DigestArrayParam hash) const;
+    bool Equals(const JobIdentifier & rhs) const;
+    bool Equals(const DigestArrayParam hash) const;
     void Generate(const std::string & address);
     std::string ToString() const;
 };

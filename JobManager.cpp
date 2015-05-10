@@ -48,9 +48,7 @@ bool JobManager::ValidateFileExtension(const std::string & value) {
 //--------------------------------------------------------------------------------
 
 bool JobManager::ValidateFilterId(int16_t value) {
-    //TODO: Complete this method...
-    return true;
-    //...
+    return FILTER_ID_INVERT <= value && value <= FILTER_ID_GRAY;
 }
 
 //--------------------------------------------------------------------------------

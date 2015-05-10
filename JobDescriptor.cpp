@@ -29,3 +29,9 @@ JobDescriptor::JobDescriptor() : identifier_(), clientAddress_(), fileExtension_
 //--------------------------------------------------------------------------------
 
 JobDescriptor::~JobDescriptor() {}
+
+//--------------------------------------------------------------------------------
+
+bool JobDescriptor::operator==(const JobDescriptor & rhs) {
+    return identifier_ == rhs.identifier_ && clientAddress_ == rhs.clientAddress_;
+}

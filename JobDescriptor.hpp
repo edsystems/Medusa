@@ -36,6 +36,7 @@ public:
     // Constructors:
     JobDescriptor();
     ~JobDescriptor();
+    bool operator==(const JobDescriptor & rhs);
     // Properties:
     inline const JobIdentifier & GetIdentifier() const { return identifier_; }
     inline const std::string & GetClientAddress() const { return clientAddress_; }
