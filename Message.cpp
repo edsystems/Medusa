@@ -52,17 +52,17 @@ void Message::BuildJobRequest(JobRequest & victim, const std::string & fileExt,
 //--------------------------------------------------------------------------------
 
 void Message::BuildJobAccepted(JobAccepted & victim,
-    const uint32_t jobId[DIGEST_SIZE]) {
+    const JobIdentifier::DigestArrayParam jobId) {
     victim.code = JOB_ACCEPTED_ID;
-    std::memcpy(victim.jobId, jobId, DIGEST_SIZE);
+    std::memcpy(victim.jobId, jobId, JobIdentifier::DIGEST_SIZE);
 }
 
 //--------------------------------------------------------------------------------
 
 void Message::BuildReconnectRequest(ReconnectRequest & victim,
-    const uint32_t jobId[DIGEST_SIZE]) {
+    const JobIdentifier::DigestArrayParam jobId) {
     victim.code = RECONNECT_REQUEST_ID;
-    std::memcpy(victim.jobId, jobId, DIGEST_SIZE);
+    std::memcpy(victim.jobId, jobId, JobIdentifier::DIGEST_SIZE);
 }
 
 //--------------------------------------------------------------------------------
@@ -129,7 +129,8 @@ bool Message::SendJobRequest(Socket * socket, const std::string & fileExt,
 
 //--------------------------------------------------------------------------------
 
-bool Message::SendJobAccepted(Socket * socket, const uint32_t jobId[DIGEST_SIZE]) {
+bool Message::SendJobAccepted(Socket * socket,
+    const JobIdentifier::DigestArrayParam jobId) {
     // Make the message:
     JobAccepted message;
     BuildJobAccepted(message, jobId);
@@ -140,7 +141,8 @@ bool Message::SendJobAccepted(Socket * socket, const uint32_t jobId[DIGEST_SIZE]
 
 //--------------------------------------------------------------------------------
 
-bool Message::SendReconnectRequest(Socket * socket, const uint32_t jobId[DIGEST_SIZE]) {
+bool Message::SendReconnectRequest(Socket * socket,
+    const JobIdentifier::DigestArrayParam jobId) {
     // Make the message:
     ReconnectRequest message;
     BuildReconnectRequest(message, jobId);

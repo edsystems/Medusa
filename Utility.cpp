@@ -53,3 +53,16 @@ int GetRandom(int max) {
 int GetRandom() {
     return std::rand();
 }
+
+//--------------------------------------------------------------------------------
+
+uint32_t BigToLittleEndian(uint32_t victim) {
+    uint32_t result;
+    uint8_t * aux = reinterpret_cast<uint8_t *>(&victim);
+    uint8_t * hash = reinterpret_cast<uint8_t *>(&result);
+	hash[0] = aux[3];
+	hash[1] = aux[2];
+	hash[2] = aux[1];
+	hash[3] = aux[0];
+    return result;
+}

@@ -16,16 +16,33 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#ifndef __MEDUSA_UTILITY__
-#define __MEDUSA_UTILITY__
+#ifndef __MEDUSA_JOB_IDENTIFIER__
+#define __MEDUSA_JOB_IDENTIFIER__
 
 #include <string>
 #include <cstdint>
 
-bool IsPortNumber(const std::string & victim);
-void InitializeRandom();
-int GetRandom(int max);
-int GetRandom();
-uint32_t BigToLittleEndian(uint32_t victim);
+class JobIdentifier {
+public:
+    // Constants:
+    static const int DIGEST_SIZE = 5;
+    // Types:
+    typedef uint32_t DigestArray[DIGEST_SIZE];
+    typedef uint32_t (&DigestArrayParam)[DIGEST_SIZE];
+private:
+    // Fields:
+    DigestArray hash_;
+public:
+    // Constructors:
+    JobIdentifier();
+    JobIdentifier(DigestArrayParam hash);
+    ~JobIdentifier();
+    // Properties:
+    inline const uint32_t * GetHash() const { return hash_; }
+    void GetHash(DigestArrayParam hash) const;
+    // Methods:
+    void Generate(const std::string & address);
+    std::string ToString() const;
+};
 
 #endif

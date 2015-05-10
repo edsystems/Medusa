@@ -12,6 +12,8 @@ SOURCES = main.cpp \
           boostimp.cpp \
           Connection.cpp \
           ConnectionPool.cpp \
+          JobDescriptor.cpp \
+          JobIdentifier.cpp \
           JobManager.cpp \
           ListenConnection.cpp \
           Message.cpp \

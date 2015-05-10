@@ -16,16 +16,4 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#ifndef __MEDUSA_UTILITY__
-#define __MEDUSA_UTILITY__
-
-#include <string>
-#include <cstdint>
-
-bool IsPortNumber(const std::string & victim);
-void InitializeRandom();
-int GetRandom(int max);
-int GetRandom();
-uint32_t BigToLittleEndian(uint32_t victim);
-
-#endif
+#include "JobDescriptor.hpp"
