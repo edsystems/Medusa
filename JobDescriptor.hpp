@@ -19,18 +19,34 @@
 #ifndef __MEDUSA_JOB_DESCRIPTOR__
 #define __MEDUSA_JOB_DESCRIPTOR__
 
-#include <string>
+#include <JobIdentifier.hpp>
 
 class JobDescriptor {
 private:
     // Fields:
+    JobIdentifier identifier_;
     std::string clientAddress_;
+    std::string fileExtension_;
+    std::string filePath_;
+    int32_t fileSize_;
+    int32_t numberOfFragments_;
+    int32_t currentFragments_;
+    int16_t filterId_;
 public:
     // Constructors:
     JobDescriptor();
     ~JobDescriptor();
     // Properties:
-    // Methods:
+    inline const JobIdentifier & GetIdentifier() const { return identifier_; }
+    inline const std::string & GetClientAddress() const { return clientAddress_; }
+    inline const std::string & GetFileExtension() const { return fileExtension_; }
+    inline const std::string & GetFilePath() const { return filePath_; }
+    inline int32_t GetFileSize() const { return fileSize_; }
+    inline int32_t GetNumberOfFragments() const { return numberOfFragments_; }
+    inline int32_t GetCurrentFragments() const { return currentFragments_; }
+    inline int16_t GetFilterId() const { return filterId_; }
+    // Friends:
+    friend class JobManager;
 };
 
 #endif

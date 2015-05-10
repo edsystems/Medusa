@@ -57,6 +57,12 @@ void JobIdentifier::GetHash(DigestArrayParam hash) const {
 // [JobIdentifier] Methods:
 //********************************************************************************
 
+bool JobIdentifier::Equals(DigestArrayParam hash) const {
+    return std::memcmp(hash, hash_, sizeof(DigestArray)) == 0;
+}
+
+//--------------------------------------------------------------------------------
+
 void JobIdentifier::Generate(const std::string & address) {
     // Generate the data to be used in the hash:
     auto now = std::chrono::system_clock::now();

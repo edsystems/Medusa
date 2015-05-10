@@ -114,6 +114,7 @@ public:
     static void BuildJobFinished(JobFinished & victim, const std::string & fileExt, int32_t fileSize, int16_t filterId);
     //...
     static void BuildErrorResponse(ErrorResponse & victim, int16_t errorCode);
+
     static bool SendJobRequest(Socket * socket, const std::string & fileExt, int32_t fileSize, int16_t filterId);
     static bool SendJobAccepted(Socket * socket, const JobIdentifier::DigestArrayParam jobId);
     static bool SendReconnectRequest(Socket * socket, const JobIdentifier::DigestArrayParam jobId);

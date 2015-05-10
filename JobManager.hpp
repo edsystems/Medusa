@@ -22,21 +22,23 @@
 #include <mutex>
 #include <vector>
 #include <Message.hpp>
+#include <JobDescriptor.hpp>
 
 class JobManager {
 private:
     // Fields:
     static std::mutex mutex_;
+    static std::vector<JobDescriptor> descriptors_;
 public:
     // Constructors:
     JobManager() = delete;
     ~JobManager() = delete;
-    // Properties:
     // Methods:
+    static void ClearDescriptors();
     static bool ValidateFileExtension(const std::string & value);
     static bool ValidateFilterId(int16_t value);
     static int16_t ValidateRequest(const Message::JobRequest & msg);
-    static void AddRequest(const std::string & address, const Message::JobRequest & msg);
+    static JobDescriptor * AddRequest(const std::string & address, const Message::JobRequest & msg);
 };
 
 #endif

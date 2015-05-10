@@ -25,10 +25,19 @@
 //********************************************************************************
 
 std::mutex JobManager::mutex_;
+std::vector<JobDescriptor> JobManager::descriptors_;
 
 //********************************************************************************
 // [JobManager] Methods:
 //********************************************************************************
+
+void JobManager::ClearDescriptors() {
+    mutex_.lock();
+    descriptors_.clear();
+    mutex_.unlock();
+}
+
+//--------------------------------------------------------------------------------
 
 bool JobManager::ValidateFileExtension(const std::string & value) {
     auto victim = value;
@@ -54,4 +63,27 @@ int16_t JobManager::ValidateRequest(const Message::JobRequest & msg) {
     } else {
         return Message::ERROR_CODE_NOTHING_WRONG;
     }
+}
+
+//--------------------------------------------------------------------------------
+
+JobDescriptor * JobManager::AddRequest(const std::string & address, const Message::JobRequest & msg) {
+    JobDescriptor * victim = nullptr;
+    mutex_.lock();
+    auto idx = descriptors_.size();
+    descriptors_.push_back(JobDescriptor());
+    victim = &(descriptors_[idx]);
+    victim->identifier_.Generate(address);
+    victim->clientAddress_ = address;
+    victim->fileExtension_ = std::string(msg.fileExtension);
+    victim->filePath_ = victim->identifier_.ToString() + "." + victim->fileExtension_;
+    victim->fileSize_ = msg.fileSize;
+    victim->numberOfFragments_ = msg.fileSize / Message::MAX_FRAGMENT_SIZE;
+    if (victim->numberOfFragments_ * Message::MAX_FRAGMENT_SIZE != msg.fileSize) {
+        ++(victim->numberOfFragments_);
+    }
+    victim->currentFragments_ = 0;
+    victim->filterId_ = msg.filterId;
+    mutex_.unlock();
+    return victim;
 }
