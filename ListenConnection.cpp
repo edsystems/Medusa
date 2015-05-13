@@ -28,7 +28,7 @@
 //********************************************************************************
 
 ListenConnection::ListenConnection(SharedSocket & socket) :
-    Connection(socket) {}
+    Connection(socket), descriptor_(nullptr) {}
 
 //--------------------------------------------------------------------------------
 
@@ -39,14 +39,20 @@ ListenConnection::~ListenConnection() {}
 //********************************************************************************
 
 void ListenConnection::process(int8_t * buffer, size_t length) {
-    //TODO: Complete this method...
     switch (*buffer) {
     case Message::JOB_REQUEST_ID:
         if (sizeof(Message::JobRequest) == length) {
             auto * msg = (Message::JobRequest *)buffer;
             auto errorCode = JobManager::ValidateRequest(*msg);
             if (errorCode == Message::ERROR_CODE_NOTHING_WRONG) {
-                //...
+                descriptor_ = JobManager::AddRequest(GetRemoteAddress(), *msg);
+                if (descriptor_) {
+                    JobIdentifier::DigestArray jobId;
+                    descriptor_->GetIdentifier().GetHash(jobId);
+                    Message::SendJobAccepted(socket_.get(), jobId);
+                } else {
+                    Message::SendErrorResponse(socket_.get(), Message::ERROR_CODE_PANIC);
+                }
             } else {
                 Message::SendErrorResponse(socket_.get(), errorCode);
             }
@@ -54,8 +60,9 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
             throw std::exception("[ListenConnection::process] Invalid JobRequest size!");
         }
         break;
-    }
+    //TODO: Complete this method...
     //...
+    }
 }
 
 //--------------------------------------------------------------------------------

@@ -21,12 +21,16 @@
 
 #include <Connection.hpp>
 
+class JobDescriptor;
+
 //********************************************************************************
 // ListenConnection:
 //********************************************************************************
 
 class ListenConnection : public Connection {
 protected:
+    // Fields:
+    JobDescriptor * descriptor_;
     // Methods:
     void process(int8_t * buffer, size_t length);
 public:

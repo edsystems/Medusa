@@ -22,9 +22,9 @@
 // [JobDescriptor] Constructors:
 //********************************************************************************
 
-JobDescriptor::JobDescriptor() : identifier_(), clientAddress_(), fileExtension_(),
-    filePath_(), fileSize_(0), numberOfFragments_(0), currentFragments_(0),
-    filterId_(0) {}
+JobDescriptor::JobDescriptor() : identifier_(), ownerAddress_(), clientAddress_(),
+    fileExtension_(), filePath_(), fileSize_(0), numberOfFragments_(0),
+    currentFragments_(0), filterId_(0) {}
 
 //--------------------------------------------------------------------------------
 

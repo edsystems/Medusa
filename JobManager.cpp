@@ -19,6 +19,7 @@
 #include "JobManager.hpp"
 
 #include <algorithm>
+#include <Server.hpp>
 
 //********************************************************************************
 // [JobManager] Fields:
@@ -72,6 +73,7 @@ JobDescriptor * JobManager::AddRequest(const std::string & address, const Messag
     descriptors_.push_back(JobDescriptor());
     victim = &(descriptors_[idx]);
     victim->identifier_.Generate(address);
+    victim->ownerAddress_ = Server::LOCAL_HOST;
     victim->clientAddress_ = address;
     victim->fileExtension_ = std::string(msg.fileExtension);
     victim->filePath_ = victim->identifier_.ToString() + "." + victim->fileExtension_;

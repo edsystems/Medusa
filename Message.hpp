@@ -57,6 +57,7 @@ public:
     static const int16_t ERROR_CODE_WRONG_JOBID     = 4;
     static const int16_t ERROR_CODE_WRONG_FRAGMENT  = 5;
     //static const int16_t ERROR_CODE_ = 0;
+    static const int16_t ERROR_CODE_PANIC           = 101;
 
     // Types:
     typedef boost::asio::ip::tcp::socket Socket;

@@ -25,6 +25,7 @@ class JobDescriptor {
 private:
     // Fields:
     JobIdentifier identifier_;
+    std::string ownerAddress_;
     std::string clientAddress_;
     std::string fileExtension_;
     std::string filePath_;
@@ -39,6 +40,7 @@ public:
     bool operator==(const JobDescriptor & rhs);
     // Properties:
     inline const JobIdentifier & GetIdentifier() const { return identifier_; }
+    inline const std::string & GetOwnerAddress() const { return ownerAddress_; }
     inline const std::string & GetClientAddress() const { return clientAddress_; }
     inline const std::string & GetFileExtension() const { return fileExtension_; }
     inline const std::string & GetFilePath() const { return filePath_; }
