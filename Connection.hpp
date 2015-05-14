@@ -41,6 +41,8 @@ protected:
     SharedSocket socket_;
     // Methods:
     void logWriteLine(const std::string & line);
+    bool isConnectionClosed(const boost::system::error_code & error);
+    virtual void process(int8_t * buffer, size_t length) = 0;
 public:
     // Constructors:
     Connection(SharedSocket & socket);
@@ -54,7 +56,7 @@ public:
     uint16_t GetLocalPort() const;
     uint16_t GetRemotePort() const;
     // Methods:
-    virtual void Run() = 0;
+    void Run();
     static SharedSocket MakeSharedSocket();
 };
 

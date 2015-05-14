@@ -19,8 +19,6 @@
 #include "ListenConnection.hpp"
 
 #include <iostream>
-#include <boost/asio/write.hpp>
-#include <boost/array.hpp>
 #include <JobManager.hpp>
 
 //********************************************************************************
@@ -45,10 +43,10 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
             auto * msg = (Message::JobRequest *)buffer;
             auto errorCode = JobManager::ValidateRequest(*msg);
             if (errorCode == Message::ERROR_CODE_NOTHING_WRONG) {
-                logWriteLine("Job request received.");
+                logWriteLine("Job request received");
                 descriptor_ = JobManager::AddRequest(GetRemoteAddress(), *msg);
                 if (descriptor_) {
-                    logWriteLine("Job created.");
+                    logWriteLine("Job created");
                     JobIdentifier::DigestArray jobId;
                     descriptor_->GetIdentifier().GetHash(jobId);
                     Message::SendJobAccepted(socket_.get(), jobId);
@@ -65,37 +63,4 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
     //TODO: Complete this method...
     //...
     }
-}
-
-//--------------------------------------------------------------------------------
-
-void ListenConnection::Run() {
-    thread_ = std::make_shared<std::thread>(
-        [&] () {
-            try {
-                bool notExit = true;
-                boost::system::error_code error;
-                boost::array<int8_t, Message::MAX_SIZE> buffer;
-                auto socketBuffer = boost::asio::buffer(buffer);
-                while (notExit) {
-                    size_t length = socket_->read_some(socketBuffer, error);
-                    if (error == boost::asio::error::eof) {
-                        logWriteLine("Connection closed.");
-                        finished_ = true;
-                        return;
-                    } else if (error) {
-                        throw boost::system::system_error(error);
-                    } else {
-                        process(buffer.c_array(), length);
-                    }
-                }
-                socket_->close();
-            } catch (std::exception & e) {
-                std::cerr << "[ListenConnection::Run] catch => std::exception" << std::endl;
-                std::cerr << "[WHAT] " << e.what() << std::endl;
-            }
-            finished_ = true;
-        }
-    );
-    thread_->detach();
 }

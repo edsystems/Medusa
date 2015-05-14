@@ -55,7 +55,7 @@ void Server::loadServers(const std::string & path) {
             Network::AddNode(node);
         } catch (std::exception & e) {
             std::cerr << "[Server::loadServers::addServer] catch => std::exception" << std::endl;
-            std::cerr << "[WHAT] " << e.what() << std::endl;
+            std::cerr << "+ WHAT: " << e.what() << std::endl;
         }
     };
     // Clear the current nodes:
@@ -76,8 +76,8 @@ void Server::loadServers(const std::string & path) {
             addServer(address, port);
         } else {
             std::cerr << "[Server::loadServers] Wrong line!" << std::endl;
-            std::cerr << "[FILE] " << path << std::endl;
-            std::cerr << "[LINE] " << line << std::endl;
+            std::cerr << "+ FILE: " << path << std::endl;
+            std::cerr << "+ LINE: " << line << std::endl;
         }
     }
 }
@@ -96,7 +96,7 @@ bool Server::Initialize() {
         return true;
     } catch (std::exception & e) {
         std::cerr << "[Server::Initialize] catch => std::exception" << std::endl;
-        std::cerr << "[WHAT] " << e.what() << std::endl;
+        std::cerr << "+ WHAT: " << e.what() << std::endl;
         return false;
     }
 }
@@ -127,6 +127,6 @@ void Server::Run() {
         }
     } catch (std::exception & e) {
         std::cerr << "[Server::Run] catch => std::exception" << std::endl;
-        std::cerr << "[WHAT] " << e.what() << std::endl;
+        std::cerr << "+ WHAT: " << e.what() << std::endl;
     }
 }

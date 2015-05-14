@@ -16,27 +16,39 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#ifndef __MEDUSA_LISTEN_CONNECTION__
-#define __MEDUSA_LISTEN_CONNECTION__
+#ifndef __MEDUSA_FRAGMENTED_FILE__
+#define __MEDUSA_FRAGMENTED_FILE__
 
-#include <Connection.hpp>
+#include <string>
+#include <vector>
+#include <cstdint>
 
-class JobDescriptor;
-
-//********************************************************************************
-// ListenConnection:
-//********************************************************************************
-
-class ListenConnection : public Connection {
-protected:
+class FragmentedFile {
+public:
+    // Types:
+    typedef std::vector<uint8_t> FileChunk;
+    typedef std::vector<FileChunk> VectorOfChunks;
+private:
     // Fields:
-    JobDescriptor * descriptor_;
-    // Methods:
-    virtual void process(int8_t * buffer, size_t length);
+    size_t size_;
+    size_t chunkSize_;
+    VectorOfChunks data_;
+    std::string path_;
 public:
     // Constructors:
-    ListenConnection(SharedSocket & socket);
-    virtual ~ListenConnection();
+    FragmentedFile(size_t chunkSize);
+    FragmentedFile(const FragmentedFile & obj);
+    ~FragmentedFile();
+    // Properties:
+    inline size_t GetSize() const { return size_; }
+    inline size_t GetChunkSize() const { return chunkSize_; }
+    inline unsigned int GetNumberOfChunks() const { return data_.size(); }
+    inline const std::string & GetPath() const { return path_; }
+    std::string GetPathExtension() const;
+    // Methods:
+    bool Load(const std::string & path);
+    bool Save(const std::string & path);
+    void Unload();
 };
 
 #endif

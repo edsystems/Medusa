@@ -28,7 +28,7 @@ class JobManager {
 public:
     // Constants:
     static const int16_t FILTER_ID_INVERT = 0;
-    static const int16_t FILTER_ID_GRAY = 1;
+    static const int16_t FILTER_ID_GRAY   = 1;
 private:
     // Fields:
     static std::mutex mutex_;

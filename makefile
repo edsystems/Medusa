@@ -12,6 +12,7 @@ SOURCES = main.cpp \
           boostimp.cpp \
           Connection.cpp \
           ConnectionPool.cpp \
+          FragmentedFile \
           JobDescriptor.cpp \
           JobIdentifier.cpp \
           JobManager.cpp \
