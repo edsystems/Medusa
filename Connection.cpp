@@ -19,6 +19,7 @@
 #include "Connection.hpp"
 
 #include <Network.hpp>
+#include <Utility.hpp>
 
 //********************************************************************************
 // [Connection] Constructors:
@@ -60,6 +61,14 @@ uint16_t Connection::GetRemotePort() const {
 //********************************************************************************
 // [Connection] Methods:
 //********************************************************************************
+
+void Connection::logWriteLine(const std::string & line) {
+#ifdef _DEBUG
+    LogWriteLine(GetRemoteAddress() + " -> " + line);
+#endif
+}
+
+//--------------------------------------------------------------------------------
 
 Connection::SharedSocket Connection::MakeSharedSocket() {
     return std::make_shared<boost::asio::ip::tcp::socket>(Network::GetIoService());

@@ -22,6 +22,7 @@
 #include <string>
 #include <cstdint>
 
+void LogWriteLine(const std::string & line);
 bool IsPortNumber(const std::string & victim);
 void InitializeRandom();
 int GetRandom(int max);

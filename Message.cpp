@@ -68,12 +68,12 @@ void Message::BuildReconnectRequest(ReconnectRequest & victim,
 //--------------------------------------------------------------------------------
 
 void Message::BuildSendFragment(SendFragment & victim, int32_t number,
-    const char * data, size_t length) {
+    size_t length, const char * data) {
     if (length <= MAX_FRAGMENT_SIZE) {
         victim.code = SEND_FRAGMENT_ID;
         victim.fragmentNumber = number;
-        std::memcpy(victim.fragmentData, data, length);
         victim.fragmentDataSize = length;
+        std::memcpy(victim.fragmentData, data, length);
     } else {
         victim.code = INVALID_ID;
     }
@@ -153,11 +153,11 @@ bool Message::SendReconnectRequest(Socket * socket,
 
 //--------------------------------------------------------------------------------
 
-bool Message::SendSendFragment(Socket * socket, int32_t number,
-    const char * data, size_t length) {
+bool Message::SendSendFragment(Socket * socket, int32_t number, size_t length,
+    const char * data) {
     // Make the message:
     SendFragment message;
-    BuildSendFragment(message, number, data, length);
+    BuildSendFragment(message, number, length, data);
     if (message.code != SEND_FRAGMENT_ID) return false;
     // Send the message:
     return SendMessageWithBoost(socket, message);

@@ -20,10 +20,19 @@
 
 #include <ctime>
 #include <limits>
+#include <iostream>
 
 //********************************************************************************
 // Functions:
 //********************************************************************************
+
+void LogWriteLine(const std::string & line) {
+#ifdef _DEBUG
+    std::cout << line << std::endl;
+#endif
+}
+
+//--------------------------------------------------------------------------------
 
 bool IsPortNumber(const std::string & victim) {
     try {

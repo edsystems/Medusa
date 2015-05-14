@@ -21,6 +21,7 @@
 
 #include <memory>
 #include <thread>
+#include <string>
 #include <cstdint>
 #include <boost/asio/ip/tcp.hpp>
 
@@ -38,6 +39,8 @@ protected:
     bool finished_;
     SharedThread thread_;
     SharedSocket socket_;
+    // Methods:
+    void logWriteLine(const std::string & line);
 public:
     // Constructors:
     Connection(SharedSocket & socket);

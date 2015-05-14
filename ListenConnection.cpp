@@ -45,8 +45,10 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
             auto * msg = (Message::JobRequest *)buffer;
             auto errorCode = JobManager::ValidateRequest(*msg);
             if (errorCode == Message::ERROR_CODE_NOTHING_WRONG) {
+                logWriteLine("Job request received.");
                 descriptor_ = JobManager::AddRequest(GetRemoteAddress(), *msg);
                 if (descriptor_) {
+                    logWriteLine("Job created.");
                     JobIdentifier::DigestArray jobId;
                     descriptor_->GetIdentifier().GetHash(jobId);
                     Message::SendJobAccepted(socket_.get(), jobId);
@@ -78,6 +80,7 @@ void ListenConnection::Run() {
                 while (notExit) {
                     size_t length = socket_->read_some(socketBuffer, error);
                     if (error == boost::asio::error::eof) {
+                        logWriteLine("Connection closed.");
                         finished_ = true;
                         return;
                     } else if (error) {
