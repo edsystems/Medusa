@@ -43,6 +43,7 @@ public:
     static bool ValidateFilterId(int16_t value);
     static int16_t ValidateRequest(const Message::JobRequest & msg);
     static JobDescriptor * AddRequest(const std::string & address, uint16_t port, const Message::JobRequest & msg);
+    static JobDescriptor * FindRequest(const std::string & address, uint16_t port, Message::ReconnectRequest & msg);
 };
 
 #endif

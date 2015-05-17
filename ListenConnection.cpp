@@ -63,12 +63,26 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
         }
         break;
     case Message::RECONNECT_REQUEST_ID:
-        //TODO: Complete this case...
-        //...
+        if (sizeof(Message::ReconnectRequest) == length) {
+            auto * msg = (Message::ReconnectRequest *)buffer;
+            descriptor_ = JobManager::FindRequest(GetRemoteAddress(), GetRemotePort(), *msg);
+            if (descriptor_) {
+                Message::SendReconnectAccepted(socket_.get());
+            } else {
+                Message::SendErrorResponse(socket_.get(), Message::ERROR_CODE_WRONG_JOBID);
+            }
+        } else {
+            throw std::exception("[ListenConnection::process] Invalid ReconnectRequest size!");
+        }
         break;
     case Message::FRAGMENT_SENT_ID:
-        //TODO: Complete this case...
-        //...
+        if (sizeof(Message::FragmentSent) == length) {
+            auto * msg = (Message::FragmentSent *)buffer;
+            //TODO: Complete this case...
+            //...
+        } else {
+            throw std::exception("[ListenConnection::process] Invalid FragmentSent size!");
+        }
         break;
     }
 }

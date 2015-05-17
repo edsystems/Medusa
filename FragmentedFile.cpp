@@ -111,10 +111,56 @@ bool FragmentedFile::Save(const std::string & path) {
 
 //--------------------------------------------------------------------------------
 
+bool FragmentedFile::Save() {
+    return path_.empty() ? false : Save(path_);
+}
+
+//--------------------------------------------------------------------------------
+
 void FragmentedFile::Unload() {
     std::for_each(std::begin(data_), std::end(data_),
         [] (FileChunk & victim) { victim.clear(); });
     data_.clear();
     path_ = "";
     size_ = 0;
+}
+
+//--------------------------------------------------------------------------------
+
+void FragmentedFile::Make(size_t size, const std::string & path) {
+    // Set the fields:
+    Unload();
+    size_ = size;
+    path_ = path;
+    // Calculate the number of chunks:
+    size_t chunksCount = size_ / chunkSize_;
+    if (chunksCount * chunkSize_ != size_) {
+        ++chunksCount;
+    }
+    // Create the chunks:
+    data_ = VectorOfChunks(chunksCount);
+}
+
+//--------------------------------------------------------------------------------
+
+bool FragmentedFile::Set(unsigned int index, const uint8_t * chunk, size_t chunkSize) {
+    if (index < GetNumberOfChunks()) {
+        data_[index] = FileChunk(chunk, chunk + chunkSize);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//--------------------------------------------------------------------------------
+
+bool FragmentedFile::Validate() {
+    size_t currentSize = 0;
+    std::for_each(
+        std::begin(data_), std::end(data_),
+        [&currentSize] (const FileChunk & victim) {
+            currentSize += victim.size();
+        }
+    );
+    return size_ == currentSize;
 }

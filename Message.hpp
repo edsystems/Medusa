@@ -39,16 +39,17 @@ public:
     static const int MAX_FRAGMENT_SIZE       = 1000;
     static const int MAX_FILE_EXTENSION_SIZE = 16;
 
-    static const int8_t INVALID_ID           = 0;
-    static const int8_t JOB_REQUEST_ID       = 1;
-    static const int8_t JOB_ACCEPTED_ID      = 2;
-    static const int8_t RECONNECT_REQUEST_ID = 3;
-    static const int8_t FRAGMENT_SENT_ID     = 4;
-    static const int8_t FRAGMENT_RECEIVED_ID = 5;
-    static const int8_t JOB_STARTED_ID       = 6;
-    static const int8_t JOB_FINISHED_ID      = 7;
-    //static const int8_t TASK_REQUEST_ID      = 8;
-    static const int8_t ERROR_RESPONSE_ID    = 101;
+    static const int8_t INVALID_ID            = 0;
+    static const int8_t JOB_REQUEST_ID        = 4;
+    static const int8_t JOB_ACCEPTED_ID       = 8;
+    static const int8_t RECONNECT_REQUEST_ID  = 15;
+    static const int8_t RECONNECT_ACCEPTED_ID = 16;
+    static const int8_t FRAGMENT_SENT_ID      = 23;
+    static const int8_t FRAGMENT_RECEIVED_ID  = 42;
+    static const int8_t JOB_STARTED_ID        = 50;
+    static const int8_t JOB_FINISHED_ID       = 51;
+    //static const int8_t TASK_REQUEST_ID       = 60;
+    static const int8_t ERROR_RESPONSE_ID     = 101;
 
     static const int16_t ERROR_CODE_NOTHING_WRONG   = 0;
     static const int16_t ERROR_CODE_WRONG_EXTENSION = 1;
@@ -83,6 +84,8 @@ public:
         JobIdentifier::DigestArray jobId;
     };
 
+    typedef Generic ReconnectAccepted;
+
     struct FragmentSent {
         int8_t code;
         int32_t fragmentNumber;
@@ -112,6 +115,7 @@ public:
     static void BuildJobRequest(JobRequest & victim, const std::string & fileExt, int32_t fileSize, int16_t filterId);
     static void BuildJobAccepted(JobAccepted & victim, const JobIdentifier::DigestArrayParam jobId);
     static void BuildReconnectRequest(ReconnectRequest & victim, const JobIdentifier::DigestArrayParam jobId);
+    static void BuildReconnectAccepted(ReconnectAccepted & victim);
     static void BuildFragmentSent(FragmentSent & victim, int32_t number, size_t length, const char * data);
     static void BuildFragmentReceived(FragmentReceived & victim);
     static void BuildJobStarted(JobStarted & victim);
@@ -122,6 +126,7 @@ public:
     static bool SendJobRequest(Socket * socket, const std::string & fileExt, int32_t fileSize, int16_t filterId);
     static bool SendJobAccepted(Socket * socket, const JobIdentifier::DigestArrayParam jobId);
     static bool SendReconnectRequest(Socket * socket, const JobIdentifier::DigestArrayParam jobId);
+    static bool SendReconnectAccepted(Socket * socket);
     static bool SendFragmentSent(Socket * socket, int32_t number, size_t length, const char * data);
     static bool SendFragmentReceived(Socket * socket);
     static bool SendJobStarted(Socket * socket);

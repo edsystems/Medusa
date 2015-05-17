@@ -48,7 +48,11 @@ public:
     // Methods:
     bool Load(const std::string & path);
     bool Save(const std::string & path);
+    bool Save();
     void Unload();
+    void Make(size_t size, const std::string & path);
+    bool Set(unsigned int index, const uint8_t * chunk, size_t chunkSize);
+    bool Validate();
 };
 
 #endif

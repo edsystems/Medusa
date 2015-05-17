@@ -86,7 +86,26 @@ JobDescriptor * JobManager::AddRequest(const std::string & address, uint16_t por
     }
     victim->currentFragments_ = 0;
     victim->filterId_ = msg.filterId;
-    //victim->fileData_.Unload();
+    victim->fileData_.Make(victim->fileSize_, victim->identifier_.ToString() + "." + victim->fileExtension_);
     mutex_.unlock();
     return victim;
+}
+
+//--------------------------------------------------------------------------------
+
+JobDescriptor * JobManager::FindRequest(const std::string & address, uint16_t port,
+    Message::ReconnectRequest & msg) {
+    JobIdentifier identifier(msg.jobId);
+    auto victim = std::find_if(
+        std::begin(descriptors_), std::end(descriptors_),
+        [&] (const JobDescriptor & item) {
+            return item.GetClientAddress() == address && item.GetIdentifier() == identifier;
+        }
+    );
+    if (victim != std::end(descriptors_)) {
+        victim->clientPort_ = port;
+        return &(*victim);
+    } else {
+        return nullptr;
+    }
 }

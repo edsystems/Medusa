@@ -37,7 +37,7 @@ public:
     JobIdentifier();
     JobIdentifier(const DigestArrayParam hash);
     ~JobIdentifier();
-    bool operator==(const JobIdentifier & rhs);
+    bool operator==(const JobIdentifier & rhs) const;
     // Properties:
     inline const uint32_t * GetHash() const { return hash_; }
     void GetHash(DigestArrayParam hash) const;

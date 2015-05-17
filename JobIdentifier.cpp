@@ -47,7 +47,7 @@ JobIdentifier::~JobIdentifier() {}
 
 //--------------------------------------------------------------------------------
 
-bool JobIdentifier::operator==(const JobIdentifier & rhs) {
+bool JobIdentifier::operator==(const JobIdentifier & rhs) const {
     return Equals(rhs);
 }
 

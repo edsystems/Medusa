@@ -67,6 +67,12 @@ void Message::BuildReconnectRequest(ReconnectRequest & victim,
 
 //--------------------------------------------------------------------------------
 
+void Message::BuildReconnectAccepted(ReconnectAccepted & victim) {
+    victim.code = RECONNECT_ACCEPTED_ID;
+}
+
+//--------------------------------------------------------------------------------
+
 void Message::BuildFragmentSent(FragmentSent & victim, int32_t number,
     size_t length, const char * data) {
     if (length <= MAX_FRAGMENT_SIZE) {
@@ -153,6 +159,17 @@ bool Message::SendReconnectRequest(Socket * socket,
     ReconnectRequest message;
     BuildReconnectRequest(message, jobId);
     if (message.code != RECONNECT_REQUEST_ID) return false;
+    // Send the message:
+    return SendMessageWithBoost(socket, message);
+}
+
+//--------------------------------------------------------------------------------
+
+bool Message::SendReconnectAccepted(Socket * socket) {
+    // Make the message:
+    ReconnectAccepted message;
+    BuildReconnectAccepted(message);
+    if (message.code != RECONNECT_ACCEPTED_ID) return false;
     // Send the message:
     return SendMessageWithBoost(socket, message);
 }
