@@ -57,6 +57,7 @@ public:
     static const int16_t ERROR_CODE_WRONG_PARAMS    = 3;
     static const int16_t ERROR_CODE_WRONG_JOBID     = 4;
     static const int16_t ERROR_CODE_WRONG_FRAGMENT  = 5;
+    static const int16_t ERROR_CODE_WRONG_FILE_SENT = 6;
     //static const int16_t ERROR_CODE_ = 0;
     static const int16_t ERROR_CODE_PANIC           = 101;
 
@@ -90,7 +91,7 @@ public:
         int8_t code;
         int32_t fragmentNumber;
         int16_t fragmentDataSize;
-        char fragmentData[MAX_FRAGMENT_SIZE];
+        uint8_t fragmentData[MAX_FRAGMENT_SIZE];
     };
 
     typedef Generic FragmentReceived;
@@ -116,7 +117,7 @@ public:
     static void BuildJobAccepted(JobAccepted & victim, const JobIdentifier::DigestArrayParam jobId);
     static void BuildReconnectRequest(ReconnectRequest & victim, const JobIdentifier::DigestArrayParam jobId);
     static void BuildReconnectAccepted(ReconnectAccepted & victim);
-    static void BuildFragmentSent(FragmentSent & victim, int32_t number, size_t length, const char * data);
+    static void BuildFragmentSent(FragmentSent & victim, int32_t number, size_t length, const uint8_t * data);
     static void BuildFragmentReceived(FragmentReceived & victim);
     static void BuildJobStarted(JobStarted & victim);
     static void BuildJobFinished(JobFinished & victim, const std::string & fileExt, int32_t fileSize, int16_t filterId);
@@ -127,7 +128,7 @@ public:
     static bool SendJobAccepted(Socket * socket, const JobIdentifier::DigestArrayParam jobId);
     static bool SendReconnectRequest(Socket * socket, const JobIdentifier::DigestArrayParam jobId);
     static bool SendReconnectAccepted(Socket * socket);
-    static bool SendFragmentSent(Socket * socket, int32_t number, size_t length, const char * data);
+    static bool SendFragmentSent(Socket * socket, int32_t number, size_t length, const uint8_t * data);
     static bool SendFragmentReceived(Socket * socket);
     static bool SendJobStarted(Socket * socket);
     static bool SendJobFinished(Socket * socket, const std::string & fileExt, int32_t fileSize, int16_t filterId);

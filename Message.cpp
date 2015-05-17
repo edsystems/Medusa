@@ -74,7 +74,7 @@ void Message::BuildReconnectAccepted(ReconnectAccepted & victim) {
 //--------------------------------------------------------------------------------
 
 void Message::BuildFragmentSent(FragmentSent & victim, int32_t number,
-    size_t length, const char * data) {
+    size_t length, const uint8_t * data) {
     if (length <= MAX_FRAGMENT_SIZE) {
         victim.code = FRAGMENT_SENT_ID;
         victim.fragmentNumber = number;
@@ -177,7 +177,7 @@ bool Message::SendReconnectAccepted(Socket * socket) {
 //--------------------------------------------------------------------------------
 
 bool Message::SendFragmentSent(Socket * socket, int32_t number, size_t length,
-    const char * data) {
+    const uint8_t * data) {
     // Make the message:
     FragmentSent message;
     BuildFragmentSent(message, number, length, data);

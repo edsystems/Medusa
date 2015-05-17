@@ -93,7 +93,7 @@ bool FragmentedFile::Load(const std::string & path) {
 
 //--------------------------------------------------------------------------------
 
-bool FragmentedFile::Save(const std::string & path) {
+bool FragmentedFile::Save(const std::string & path) const {
     // Open a file for output:
     std::fstream file;
     file.open(path, std::ios::out | std::ios::trunc | std::ios::binary);
@@ -111,7 +111,7 @@ bool FragmentedFile::Save(const std::string & path) {
 
 //--------------------------------------------------------------------------------
 
-bool FragmentedFile::Save() {
+bool FragmentedFile::Save() const {
     return path_.empty() ? false : Save(path_);
 }
 
@@ -144,7 +144,7 @@ void FragmentedFile::Make(size_t size, const std::string & path) {
 //--------------------------------------------------------------------------------
 
 bool FragmentedFile::Set(unsigned int index, const uint8_t * chunk, size_t chunkSize) {
-    if (index < GetNumberOfChunks()) {
+    if (index < GetNumberOfChunks() && chunkSize <= chunkSize_) {
         data_[index] = FileChunk(chunk, chunk + chunkSize);
         return true;
     } else {
@@ -154,7 +154,13 @@ bool FragmentedFile::Set(unsigned int index, const uint8_t * chunk, size_t chunk
 
 //--------------------------------------------------------------------------------
 
-bool FragmentedFile::Validate() {
+const FragmentedFile::FileChunk & FragmentedFile::Get(unsigned int index) const {
+    return data_[index];
+}
+
+//--------------------------------------------------------------------------------
+
+bool FragmentedFile::Validate() const {
     size_t currentSize = 0;
     std::for_each(
         std::begin(data_), std::end(data_),

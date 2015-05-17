@@ -47,12 +47,13 @@ public:
     std::string GetPathExtension() const;
     // Methods:
     bool Load(const std::string & path);
-    bool Save(const std::string & path);
-    bool Save();
+    bool Save(const std::string & path) const;
+    bool Save() const;
     void Unload();
     void Make(size_t size, const std::string & path);
     bool Set(unsigned int index, const uint8_t * chunk, size_t chunkSize);
-    bool Validate();
+    const FileChunk & Get(unsigned int index) const;
+    bool Validate() const;
 };
 
 #endif

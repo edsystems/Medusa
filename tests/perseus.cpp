@@ -34,13 +34,13 @@ bool ReceiveMessage(tcp::socket & socket, TFunc handler) {
     size_t length = socket.read_some(socketBuffer, error);
     if (error == boost::asio::error::eof) {
         cerr << "ERROR: Connection closed!" << endl;
-        return false;
+        return true;
     } else if (error) {
         throw boost::system::system_error(error);
     } else {
         handler(buffer.c_array(), length);
     }
-    return true;
+    return false;
 }
 
 void OnProcessFlags(tcp::socket & socket, bool exitProcess, bool socketEof) {
@@ -105,6 +105,27 @@ int main(int argc, char ** argv) {
             }
         });
         OnProcessFlags(socket, exitProcess, socketEof);
+        // Send the file in fragments:
+        cout << "SEND: Fragment sent" << endl;
+        for (unsigned int i = 0; i < inputImageFile.GetNumberOfChunks(); ++i) {
+            auto & chunk = inputImageFile.Get(i);
+            Message::SendFragmentSent(&socket, i, chunk.size(), chunk.data());
+            socketEof = ReceiveMessage(socket, [&] (int8_t * buffer, size_t length) {
+                if (*buffer == Message::FRAGMENT_RECEIVED_ID && length == sizeof(Message::FragmentReceived)) {
+                    cout << "RECEIVED: Fragment received" << "(Fragment " << i << " sent)" << endl;
+                } else if (*buffer == Message::JOB_STARTED_ID && length == sizeof(Message::JobStarted)) {
+                    cout << "RECEIVED: Job started" << "(Fragment " << i << " sent)" << endl;
+                } else if (*buffer == Message::ERROR_RESPONSE_ID && length == sizeof(Message::ErrorResponse)) {
+                    auto * msg = (Message::ErrorResponse *)buffer;
+                    cout << "RECEIVED: Error response" << endl;
+                    cout << "+ Code: " << msg->errorCode << endl;
+                    exitProcess = true;
+                } else {
+                    exitProcess = true;
+                }
+            });
+            OnProcessFlags(socket, exitProcess, socketEof);
+        }
         socket.close();
     } catch (exception & e) {
         cerr << "EXCEPTION: " << e.what() << endl;

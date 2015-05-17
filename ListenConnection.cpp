@@ -67,6 +67,7 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
             auto * msg = (Message::ReconnectRequest *)buffer;
             descriptor_ = JobManager::FindRequest(GetRemoteAddress(), GetRemotePort(), *msg);
             if (descriptor_) {
+                logWriteLine("Client reconnected");
                 Message::SendReconnectAccepted(socket_.get());
             } else {
                 Message::SendErrorResponse(socket_.get(), Message::ERROR_CODE_WRONG_JOBID);
@@ -78,8 +79,32 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
     case Message::FRAGMENT_SENT_ID:
         if (sizeof(Message::FragmentSent) == length) {
             auto * msg = (Message::FragmentSent *)buffer;
-            //TODO: Complete this case...
-            //...
+            if (descriptor_) {
+                logWriteLine("Fragment received");
+                auto & fileData = descriptor_->GetFileData();
+                if (fileData.Set(msg->fragmentNumber, msg->fragmentData, msg->fragmentDataSize)) {
+                    logWriteLine("Fragment added to the file data");
+                    if (msg->fragmentNumber + 1 == fileData.GetNumberOfChunks()) {
+                        if (fileData.Validate()) {
+                            logWriteLine("Job started");
+                            fileData.Save();
+                            //TODO: Complete this case...
+                            //...
+                            Message::SendJobStarted(socket_.get());
+                            finished_ = true;
+                        } else {
+                            Message::SendErrorResponse(socket_.get(), Message::ERROR_CODE_WRONG_FILE_SENT);
+                        }
+                    } else {
+                        logWriteLine("Send fragment received confirmation");
+                        Message::SendFragmentReceived(socket_.get());
+                    }
+                } else {
+                    Message::SendErrorResponse(socket_.get(), Message::ERROR_CODE_WRONG_FRAGMENT);
+                }
+            } else {
+                Message::SendErrorResponse(socket_.get(), Message::ERROR_CODE_PANIC);
+            }
         } else {
             throw std::exception("[ListenConnection::process] Invalid FragmentSent size!");
         }
@@ -100,7 +125,7 @@ void ListenConnection::Run() {
                 while (!finished_) {
                     size_t length = socket_->read_some(socketBuffer, error);
                     if (isConnectionClosed(error)) {
-                        logWriteLine("Connection closed");
+                        logWriteLine("Listen connection closed");
                         finished_ = true;
                         return;
                     } else if (error) {
@@ -113,6 +138,7 @@ void ListenConnection::Run() {
                 std::cerr << "[ListenConnection::Run] catch => std::exception" << std::endl;
                 std::cerr << "+ WHAT: " << e.what() << std::endl;
             }
+            logWriteLine("Listen connection finished");
             finished_ = true;
         }
     );
