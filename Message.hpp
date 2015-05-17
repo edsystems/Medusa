@@ -43,7 +43,7 @@ public:
     static const int8_t JOB_REQUEST_ID       = 1;
     static const int8_t JOB_ACCEPTED_ID      = 2;
     static const int8_t RECONNECT_REQUEST_ID = 3;
-    static const int8_t SEND_FRAGMENT_ID     = 4;
+    static const int8_t FRAGMENT_SENT_ID     = 4;
     static const int8_t FRAGMENT_RECEIVED_ID = 5;
     static const int8_t JOB_STARTED_ID       = 6;
     static const int8_t JOB_FINISHED_ID      = 7;
@@ -83,12 +83,14 @@ public:
         JobIdentifier::DigestArray jobId;
     };
 
-    struct SendFragment {
+    struct FragmentSent {
         int8_t code;
         int32_t fragmentNumber;
         int16_t fragmentDataSize;
         char fragmentData[MAX_FRAGMENT_SIZE];
     };
+
+    typedef Generic FragmentReceived;
 
     typedef Generic JobStarted;
 
@@ -110,7 +112,8 @@ public:
     static void BuildJobRequest(JobRequest & victim, const std::string & fileExt, int32_t fileSize, int16_t filterId);
     static void BuildJobAccepted(JobAccepted & victim, const JobIdentifier::DigestArrayParam jobId);
     static void BuildReconnectRequest(ReconnectRequest & victim, const JobIdentifier::DigestArrayParam jobId);
-    static void BuildSendFragment(SendFragment & victim, int32_t number, size_t length, const char * data);
+    static void BuildFragmentSent(FragmentSent & victim, int32_t number, size_t length, const char * data);
+    static void BuildFragmentReceived(FragmentReceived & victim);
     static void BuildJobStarted(JobStarted & victim);
     static void BuildJobFinished(JobFinished & victim, const std::string & fileExt, int32_t fileSize, int16_t filterId);
     //...
@@ -119,7 +122,8 @@ public:
     static bool SendJobRequest(Socket * socket, const std::string & fileExt, int32_t fileSize, int16_t filterId);
     static bool SendJobAccepted(Socket * socket, const JobIdentifier::DigestArrayParam jobId);
     static bool SendReconnectRequest(Socket * socket, const JobIdentifier::DigestArrayParam jobId);
-    static bool SendSendFragment(Socket * socket, int32_t number, size_t length, const char * data);
+    static bool SendFragmentSent(Socket * socket, int32_t number, size_t length, const char * data);
+    static bool SendFragmentReceived(Socket * socket);
     static bool SendJobStarted(Socket * socket);
     static bool SendJobFinished(Socket * socket, const std::string & fileExt, int32_t fileSize, int16_t filterId);
     //...

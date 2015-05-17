@@ -84,12 +84,12 @@ bool Connection::isConnectionClosed(const boost::system::error_code & error) {
 void Connection::Run() {
     thread_ = std::make_shared<std::thread>(
         [&] () {
+            finished_ = false;
             try {
-                bool notExit = true;
                 boost::system::error_code error;
                 boost::array<int8_t, Message::MAX_SIZE> buffer;
                 auto socketBuffer = boost::asio::buffer(buffer);
-                while (notExit) {
+                while (!finished_) {
                     size_t length = socket_->read_some(socketBuffer, error);
                     if (isConnectionClosed(error)) {
                         logWriteLine("Connection closed");

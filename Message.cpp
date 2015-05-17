@@ -67,16 +67,22 @@ void Message::BuildReconnectRequest(ReconnectRequest & victim,
 
 //--------------------------------------------------------------------------------
 
-void Message::BuildSendFragment(SendFragment & victim, int32_t number,
+void Message::BuildFragmentSent(FragmentSent & victim, int32_t number,
     size_t length, const char * data) {
     if (length <= MAX_FRAGMENT_SIZE) {
-        victim.code = SEND_FRAGMENT_ID;
+        victim.code = FRAGMENT_SENT_ID;
         victim.fragmentNumber = number;
         victim.fragmentDataSize = length;
         std::memcpy(victim.fragmentData, data, length);
     } else {
         victim.code = INVALID_ID;
     }
+}
+
+//--------------------------------------------------------------------------------
+
+void Message::BuildFragmentReceived(FragmentReceived & victim) {
+    victim.code = FRAGMENT_RECEIVED_ID;
 }
 
 //--------------------------------------------------------------------------------
@@ -153,12 +159,23 @@ bool Message::SendReconnectRequest(Socket * socket,
 
 //--------------------------------------------------------------------------------
 
-bool Message::SendSendFragment(Socket * socket, int32_t number, size_t length,
+bool Message::SendFragmentSent(Socket * socket, int32_t number, size_t length,
     const char * data) {
     // Make the message:
-    SendFragment message;
-    BuildSendFragment(message, number, length, data);
-    if (message.code != SEND_FRAGMENT_ID) return false;
+    FragmentSent message;
+    BuildFragmentSent(message, number, length, data);
+    if (message.code != FRAGMENT_SENT_ID) return false;
+    // Send the message:
+    return SendMessageWithBoost(socket, message);
+}
+
+//--------------------------------------------------------------------------------
+
+bool Message::SendFragmentReceived(Socket * socket) {
+    // Make the message:
+    FragmentReceived message;
+    BuildFragmentReceived(message);
+    if (message.code != FRAGMENT_RECEIVED_ID) return false;
     // Send the message:
     return SendMessageWithBoost(socket, message);
 }
