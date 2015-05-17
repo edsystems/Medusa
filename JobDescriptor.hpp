@@ -20,6 +20,7 @@
 #define __MEDUSA_JOB_DESCRIPTOR__
 
 #include <JobIdentifier.hpp>
+#include <FragmentedFile.hpp>
 
 class JobDescriptor {
 private:
@@ -27,12 +28,14 @@ private:
     JobIdentifier identifier_;
     std::string ownerAddress_;
     std::string clientAddress_;
+    uint16_t clientPort_;
     std::string fileExtension_;
     std::string filePath_;
     int32_t fileSize_;
     int32_t numberOfFragments_;
     int32_t currentFragments_;
     int16_t filterId_;
+    FragmentedFile fileData_;
 public:
     // Constructors:
     JobDescriptor();
@@ -42,12 +45,15 @@ public:
     inline const JobIdentifier & GetIdentifier() const { return identifier_; }
     inline const std::string & GetOwnerAddress() const { return ownerAddress_; }
     inline const std::string & GetClientAddress() const { return clientAddress_; }
+    inline uint16_t GetClientPort() const { return clientPort_; }
     inline const std::string & GetFileExtension() const { return fileExtension_; }
     inline const std::string & GetFilePath() const { return filePath_; }
     inline int32_t GetFileSize() const { return fileSize_; }
     inline int32_t GetNumberOfFragments() const { return numberOfFragments_; }
     inline int32_t GetCurrentFragments() const { return currentFragments_; }
     inline int16_t GetFilterId() const { return filterId_; }
+    inline const FragmentedFile & GetFileData() const { return fileData_; }
+    inline FragmentedFile & GetFileData() { return fileData_; }
     // Friends:
     friend class JobManager;
 };

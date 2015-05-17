@@ -66,7 +66,8 @@ int16_t JobManager::ValidateRequest(const Message::JobRequest & msg) {
 
 //--------------------------------------------------------------------------------
 
-JobDescriptor * JobManager::AddRequest(const std::string & address, const Message::JobRequest & msg) {
+JobDescriptor * JobManager::AddRequest(const std::string & address, uint16_t port,
+    const Message::JobRequest & msg) {
     JobDescriptor * victim = nullptr;
     mutex_.lock();
     auto idx = descriptors_.size();
@@ -75,6 +76,7 @@ JobDescriptor * JobManager::AddRequest(const std::string & address, const Messag
     victim->identifier_.Generate(address);
     victim->ownerAddress_ = Server::LOCAL_HOST;
     victim->clientAddress_ = address;
+    victim->clientPort_ = port;
     victim->fileExtension_ = std::string(msg.fileExtension);
     victim->filePath_ = victim->identifier_.ToString() + "." + victim->fileExtension_;
     victim->fileSize_ = msg.fileSize;
@@ -84,6 +86,7 @@ JobDescriptor * JobManager::AddRequest(const std::string & address, const Messag
     }
     victim->currentFragments_ = 0;
     victim->filterId_ = msg.filterId;
+    //victim->fileData_.Unload();
     mutex_.unlock();
     return victim;
 }

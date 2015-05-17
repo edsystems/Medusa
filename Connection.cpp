@@ -19,9 +19,6 @@
 #include "Connection.hpp"
 
 #include <iostream>
-#include <boost/asio/write.hpp>
-#include <boost/array.hpp>
-#include <Message.hpp>
 #include <Network.hpp>
 #include <Utility.hpp>
 
@@ -77,39 +74,6 @@ void Connection::logWriteLine(const std::string & line) {
 bool Connection::isConnectionClosed(const boost::system::error_code & error) {
     return error == boost::asio::error::eof ||
            error == boost::asio::error::connection_reset;
-}
-
-//--------------------------------------------------------------------------------
-
-void Connection::Run() {
-    thread_ = std::make_shared<std::thread>(
-        [&] () {
-            finished_ = false;
-            try {
-                boost::system::error_code error;
-                boost::array<int8_t, Message::MAX_SIZE> buffer;
-                auto socketBuffer = boost::asio::buffer(buffer);
-                while (!finished_) {
-                    size_t length = socket_->read_some(socketBuffer, error);
-                    if (isConnectionClosed(error)) {
-                        logWriteLine("Connection closed");
-                        finished_ = true;
-                        return;
-                    } else if (error) {
-                        throw boost::system::system_error(error);
-                    } else {
-                        process(buffer.c_array(), length);
-                    }
-                }
-                socket_->close();
-            } catch (std::exception & e) {
-                std::cerr << "[Connection::Run] catch => std::exception" << std::endl;
-                std::cerr << "+ WHAT: " << e.what() << std::endl;
-            }
-            finished_ = true;
-        }
-    );
-    thread_->detach();
 }
 
 //--------------------------------------------------------------------------------

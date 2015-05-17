@@ -19,6 +19,8 @@
 #include "ListenConnection.hpp"
 
 #include <iostream>
+#include <boost/asio/buffer.hpp>
+#include <boost/array.hpp>
 #include <JobManager.hpp>
 
 //********************************************************************************
@@ -44,7 +46,7 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
             auto errorCode = JobManager::ValidateRequest(*msg);
             if (errorCode == Message::ERROR_CODE_NOTHING_WRONG) {
                 logWriteLine("Job request received");
-                descriptor_ = JobManager::AddRequest(GetRemoteAddress(), *msg);
+                descriptor_ = JobManager::AddRequest(GetRemoteAddress(), GetRemotePort(), *msg);
                 if (descriptor_) {
                     logWriteLine("Job created");
                     JobIdentifier::DigestArray jobId;
@@ -69,4 +71,36 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
         //...
         break;
     }
+}
+
+//--------------------------------------------------------------------------------
+
+void ListenConnection::Run() {
+    thread_ = std::make_shared<std::thread>(
+        [&] () {
+            finished_ = false;
+            try {
+                boost::system::error_code error;
+                boost::array<int8_t, Message::MAX_SIZE> buffer;
+                auto socketBuffer = boost::asio::buffer(buffer);
+                while (!finished_) {
+                    size_t length = socket_->read_some(socketBuffer, error);
+                    if (isConnectionClosed(error)) {
+                        logWriteLine("Connection closed");
+                        finished_ = true;
+                        return;
+                    } else if (error) {
+                        throw boost::system::system_error(error);
+                    } else {
+                        process(buffer.c_array(), length);
+                    }
+                }
+            } catch (std::exception & e) {
+                std::cerr << "[ListenConnection::Run] catch => std::exception" << std::endl;
+                std::cerr << "+ WHAT: " << e.what() << std::endl;
+            }
+            finished_ = true;
+        }
+    );
+    thread_->detach();
 }

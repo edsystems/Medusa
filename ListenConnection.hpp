@@ -32,11 +32,13 @@ protected:
     // Fields:
     JobDescriptor * descriptor_;
     // Methods:
-    virtual void process(int8_t * buffer, size_t length);
+    void process(int8_t * buffer, size_t length);
 public:
     // Constructors:
     ListenConnection(SharedSocket & socket);
     virtual ~ListenConnection();
+    // Methods:
+    virtual void Run();
 };
 
 #endif
