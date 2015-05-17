@@ -89,9 +89,9 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
                             logWriteLine("Job started");
                             fileData.Save();
                             //TODO: Complete this case...
+                            finished_ = true;
                             //...
                             Message::SendJobStarted(socket_.get());
-                            finished_ = true;
                         } else {
                             Message::SendErrorResponse(socket_.get(), Message::ERROR_CODE_WRONG_FILE_SENT);
                         }

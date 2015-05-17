@@ -12,7 +12,8 @@ SOURCES = main.cpp \
           boostimp.cpp \
           Connection.cpp \
           ConnectionPool.cpp \
-          FragmentedFile \
+          FragmentedFile.cpp \
+          JobConnection.cpp \
           JobDescriptor.cpp \
           JobIdentifier.cpp \
           JobManager.cpp \
@@ -22,6 +23,7 @@ SOURCES = main.cpp \
           NetworkNode.cpp \
           Options.cpp \
           Server.cpp \
+          TaskConnection.cpp \
           Utility.cpp
 _OBJS   = $(SOURCES:.cpp=.o)
 OBJECTS = $(patsubst %,$(ODIR)/%,$(_OBJS))
