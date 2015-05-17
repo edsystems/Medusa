@@ -95,17 +95,21 @@ JobDescriptor * JobManager::AddRequest(const std::string & address, uint16_t por
 
 JobDescriptor * JobManager::FindRequest(const std::string & address, uint16_t port,
     Message::ReconnectRequest & msg) {
+    JobDescriptor * victim = nullptr;
+    mutex_.lock();
     JobIdentifier identifier(msg.jobId);
-    auto victim = std::find_if(
+    auto item = std::find_if(
         std::begin(descriptors_), std::end(descriptors_),
         [&] (const JobDescriptor & item) {
             return item.GetClientAddress() == address && item.GetIdentifier() == identifier;
         }
     );
-    if (victim != std::end(descriptors_)) {
-        victim->clientPort_ = port;
-        return &(*victim);
-    } else {
-        return nullptr;
+    if (item != std::end(descriptors_)) {
+        victim = &(*item);
     }
+    if (victim != nullptr) {
+        victim->clientPort_ = port;
+    }
+    mutex_.unlock();
+    return victim;
 }
