@@ -47,6 +47,10 @@ public:
     static void AddAndRun(Connection::SharedSocket & socket) {
         AddAndRun(SharedConnection(new T(socket)));
     }
+    template<typename T, typename U> inline
+    static void AddAndRun(Connection::SharedSocket & socket, U param) {
+        AddAndRun(SharedConnection(new T(socket, param)));
+    }
 };
 
 #endif

@@ -32,6 +32,11 @@ JobConnection::JobConnection(SharedSocket & socket) :
 
 //--------------------------------------------------------------------------------
 
+JobConnection::JobConnection(SharedSocket & socket, JobDescriptor * descriptor) :
+    Connection(socket), descriptor_(descriptor) {}
+
+//--------------------------------------------------------------------------------
+
 JobConnection::~JobConnection() {}
 
 //********************************************************************************
@@ -57,11 +62,11 @@ void JobConnection::process(int8_t * buffer, size_t length) {
 //--------------------------------------------------------------------------------
 
 void JobConnection::Run() {
-    /*
     thread_ = std::make_shared<std::thread>(
         [&] () {
             finished_ = false;
             try {
+                /*
                 boost::system::error_code error;
                 boost::array<int8_t, Message::MAX_SIZE> buffer;
                 auto socketBuffer = boost::asio::buffer(buffer);
@@ -77,14 +82,14 @@ void JobConnection::Run() {
                         process(buffer.c_array(), length);
                     }
                 }
+                //*/
             } catch (std::exception & e) {
                 std::cerr << "[JobConnection::Run] catch => std::exception" << std::endl;
                 std::cerr << "+ WHAT: " << e.what() << std::endl;
             }
-            logWriteLine("Listen connection finished");
+            logWriteLine("Job connection finished");
             finished_ = true;
         }
     );
     thread_->detach();
-    //*/
 }

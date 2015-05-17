@@ -36,6 +36,7 @@ protected:
 public:
     // Constructors:
     JobConnection(SharedSocket & socket);
+    JobConnection(SharedSocket & socket, JobDescriptor * descriptor);
     virtual ~JobConnection();
     // Methods:
     virtual void Run();

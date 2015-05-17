@@ -19,8 +19,10 @@
 #include "ListenConnection.hpp"
 
 #include <iostream>
-#include <boost/asio/buffer.hpp>
 #include <boost/array.hpp>
+#include <boost/asio/buffer.hpp>
+#include <ConnectionPool.hpp>
+#include <JobConnection.hpp>
 #include <JobManager.hpp>
 
 //********************************************************************************
@@ -88,10 +90,9 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
                         if (fileData.Validate()) {
                             logWriteLine("Job started");
                             fileData.Save();
-                            //TODO: Complete this case...
-                            finished_ = true;
-                            //...
+                            ConnectionPool::AddAndRun<JobConnection>(socket_, descriptor_);
                             Message::SendJobStarted(socket_.get());
+                            finished_ = true;
                         } else {
                             Message::SendErrorResponse(socket_.get(), Message::ERROR_CODE_WRONG_FILE_SENT);
                         }
