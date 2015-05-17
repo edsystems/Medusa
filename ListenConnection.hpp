@@ -33,6 +33,7 @@ protected:
     JobDescriptor * descriptor_;
     // Methods:
     void process(int8_t * buffer, size_t length);
+    void execute();
 public:
     // Constructors:
     ListenConnection(SharedSocket & socket);

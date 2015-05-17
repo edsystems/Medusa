@@ -61,35 +61,38 @@ void JobConnection::process(int8_t * buffer, size_t length) {
 
 //--------------------------------------------------------------------------------
 
-void JobConnection::Run() {
-    thread_ = std::make_shared<std::thread>(
-        [&] () {
-            finished_ = false;
-            try {
-                /*
-                boost::system::error_code error;
-                boost::array<int8_t, Message::MAX_SIZE> buffer;
-                auto socketBuffer = boost::asio::buffer(buffer);
-                while (!finished_) {
-                    size_t length = socket_->read_some(socketBuffer, error);
-                    if (isConnectionClosed(error)) {
-                        logWriteLine("Listen connection closed");
-                        finished_ = true;
-                        return;
-                    } else if (error) {
-                        throw boost::system::system_error(error);
-                    } else {
-                        process(buffer.c_array(), length);
-                    }
-                }
-                //*/
-            } catch (std::exception & e) {
-                std::cerr << "[JobConnection::Run] catch => std::exception" << std::endl;
-                std::cerr << "+ WHAT: " << e.what() << std::endl;
+void JobConnection::execute() {
+    finished_ = false;
+    try {
+        //TODO: Complete this method...
+        /*
+        boost::system::error_code error;
+        boost::array<int8_t, Message::MAX_SIZE> buffer;
+        auto socketBuffer = boost::asio::buffer(buffer);
+        while (!finished_) {
+            size_t length = socket_->read_some(socketBuffer, error);
+            if (isConnectionClosed(error)) {
+                logWriteLine("Listen connection closed");
+                finished_ = true;
+                return;
+            } else if (error) {
+                throw boost::system::system_error(error);
+            } else {
+                process(buffer.c_array(), length);
             }
-            logWriteLine("Job connection finished");
-            finished_ = true;
         }
-    );
+        //*/
+    } catch (std::exception & e) {
+        std::cerr << "[JobConnection::execute] catch => std::exception" << std::endl;
+        std::cerr << "+ WHAT: " << e.what() << std::endl;
+    }
+    logWriteLine("Job connection finished");
+    finished_ = true;
+}
+
+//--------------------------------------------------------------------------------
+
+void JobConnection::Run() {
+    thread_ = std::make_shared<std::thread>(&JobConnection::execute, this);
     thread_->detach();
 }

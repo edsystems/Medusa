@@ -16,61 +16,77 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //********************************************************************************
 
-#include "TaskConnection.hpp"
-
-#include <iostream>
-#include <boost/asio/buffer.hpp>
-#include <boost/array.hpp>
-#include <JobManager.hpp>
+#include "Texture.hpp"
 
 //********************************************************************************
-// [TaskConnection] Constructors:
+// [Texture] Constructors:
 //********************************************************************************
 
-TaskConnection::TaskConnection(SharedSocket & socket) :
-    Connection(socket), descriptor_(nullptr) {}
+Texture::Texture() : data_(nullptr) {}
 
 //--------------------------------------------------------------------------------
 
-TaskConnection::~TaskConnection() {}
+Texture::~Texture() {}
 
 //********************************************************************************
-// [TaskConnection] Methods:
+// [Texture] Properties:
 //********************************************************************************
 
-void TaskConnection::process(int8_t * buffer, size_t length) {
-    /*
-    switch (*buffer) {
-    case Message::RECONNECT_REQUEST_ID:
-        if (sizeof(Message::ReconnectRequest) == length) {
-            auto * msg = (Message::ReconnectRequest *)buffer;
-            //TODO: Complete this case...
-            //...
-        } else {
-            throw std::exception("[TaskConnection::process] Invalid ReconnectRequest size!");
-        }
-        break;
-    }
-    //*/
+uint32_t Texture::GetWidth() const {
+    //...
+    return 0;
 }
 
 //--------------------------------------------------------------------------------
 
-void TaskConnection::execute() {
-    finished_ = false;
-    try {
-        //TODO: Complete this method...
-    } catch (std::exception & e) {
-        std::cerr << "[TaskConnection::execute] catch => std::exception" << std::endl;
-        std::cerr << "+ WHAT: " << e.what() << std::endl;
-    }
-    logWriteLine("Job connection finished");
-    finished_ = true;
+uint32_t Texture::GetHeight() const {
+    //...
+    return 0;
+}
+
+//********************************************************************************
+// [Texture] Methods:
+//********************************************************************************
+
+bool Texture::Load(const std::string & path) {
+    //...
+    return false;
 }
 
 //--------------------------------------------------------------------------------
 
-void TaskConnection::Run() {
-    thread_ = std::make_shared<std::thread>(&TaskConnection::execute, this);
-    thread_->detach();
+bool Texture::Save(const std::string & path) {
+    //...
+    return false;
+}
+
+//--------------------------------------------------------------------------------
+
+void Texture::Unload() {
+    //...
+}
+
+//--------------------------------------------------------------------------------
+
+Pixel Texture::GetPixel(uint32_t x, uint32_t y) const {
+    //...
+    return Pixel();
+}
+
+//--------------------------------------------------------------------------------
+
+void Texture::SetPixel(uint32_t x, uint32_t y, const Pixel & value) {
+    //...
+}
+
+//--------------------------------------------------------------------------------
+
+void Texture::InvertFilter(const Rectangle & area) {
+    //...
+}
+
+//--------------------------------------------------------------------------------
+
+void Texture::GrayFilter(const Rectangle & area) {
+    //...
 }

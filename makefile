@@ -24,6 +24,7 @@ SOURCES = main.cpp \
           Options.cpp \
           Server.cpp \
           TaskConnection.cpp \
+          Texture.cpp \
           Utility.cpp
 _OBJS   = $(SOURCES:.cpp=.o)
 OBJECTS = $(patsubst %,$(ODIR)/%,$(_OBJS))
