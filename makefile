@@ -5,7 +5,7 @@
 CC      = g++
 IDIR    = .
 ODIR    = obj
-FLAGS   = -I$(IDIR) -I$(IDIR)/include -std=c++11
+FLAGS   = -I$(IDIR) -std=c++11
 CFLAGS  = $(FLAGS) -c
 LFLAGS  = $(FLAGS) -lpthread
 SOURCES = main.cpp \
@@ -29,6 +29,8 @@ SOURCES = main.cpp \
 _OBJS   = $(SOURCES:.cpp=.o)
 OBJECTS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 OUTNAME = medusa
+
+#FLAGS = -I$(IDIR) -I$(IDIR)/include -std=c++11
 
 #--------------------------------------------------------------------------------
 # Compilation:
