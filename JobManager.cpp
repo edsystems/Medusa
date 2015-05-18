@@ -43,7 +43,7 @@ void JobManager::ClearDescriptors() {
 bool JobManager::ValidateFileExtension(const std::string & value) {
     auto victim = value;
     std::transform(std::begin(victim), std::end(victim), std::begin(victim), ::tolower);
-    return victim == "png" || victim == "jpg" || victim == "jpeg";
+    return /*victim == "png" ||*/ victim == "jpg" || victim == "jpeg";
 }
 
 //--------------------------------------------------------------------------------
