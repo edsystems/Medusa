@@ -25,8 +25,8 @@
 //********************************************************************************
 
 JobDescriptor::JobDescriptor() : identifier_(), ownerAddress_(), clientAddress_(),
-    fileExtension_(), filePath_(), fileSize_(0), numberOfFragments_(0),
-    currentFragments_(0), filterId_(0), fileData_(Message::MAX_FRAGMENT_SIZE) {}
+    fileExtension_(), filePath_(), finalFilePath_(), fileSize_(0), numberOfFragments_(0),
+    currentFragments_(0), filterId_(0), fileData_(Message::MAX_FRAGMENT_SIZE), texture_() {}
 
 //--------------------------------------------------------------------------------
 

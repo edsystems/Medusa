@@ -78,7 +78,9 @@ JobDescriptor * JobManager::AddRequest(const std::string & address, uint16_t por
     victim->clientAddress_ = address;
     victim->clientPort_ = port;
     victim->fileExtension_ = std::string(msg.fileExtension);
-    victim->filePath_ = victim->identifier_.ToString() + "." + victim->fileExtension_;
+    auto fileName = victim->identifier_.ToString();
+    victim->filePath_ = fileName + "." + victim->fileExtension_;
+    victim->finalFilePath_ = fileName + "_final." + victim->fileExtension_;
     victim->fileSize_ = msg.fileSize;
     victim->numberOfFragments_ = msg.fileSize / Message::MAX_FRAGMENT_SIZE;
     if (victim->numberOfFragments_ * Message::MAX_FRAGMENT_SIZE != msg.fileSize) {
@@ -86,7 +88,8 @@ JobDescriptor * JobManager::AddRequest(const std::string & address, uint16_t por
     }
     victim->currentFragments_ = 0;
     victim->filterId_ = msg.filterId;
-    victim->fileData_.Make(victim->fileSize_, victim->identifier_.ToString() + "." + victim->fileExtension_);
+    victim->fileData_.Make(victim->fileSize_, victim->filePath_);
+    victim->texture_.Unload();
     mutex_.unlock();
     return victim;
 }
