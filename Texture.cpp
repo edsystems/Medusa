@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <boost/gil/image.hpp>
+#include <boost/gil/typedefs.hpp>
 #include <boost/gil/extension/io/jpeg_io.hpp>
 //#include <boost/gil/extension/io/png_io.hpp>
 #include <Utility.hpp>
@@ -104,38 +105,27 @@ public:
     virtual bool SaveJPG(const std::string & path) const = 0;
     virtual uint32_t GetWidth() const = 0;
     virtual uint32_t GetHeight() const = 0;
-    //virtual Pixel GetPixel(uint32_t x, uint32_t y) const = 0;
-    //virtual void SetPixel(uint32_t x, uint32_t y, const Pixel & value) = 0;
+    virtual Pixel GetPixel(uint32_t x, uint32_t y) const = 0;
+    virtual void SetPixel(uint32_t x, uint32_t y, const Pixel & value) = 0;
 };
 
 //--------------------------------------------------------------------------------
 
-class PngInnerData : public Texture::InnerData {
-private:
-    boost::gil::rgba8_image_t img_;
-public:
-    // Constructors:
-    PngInnerData() {}
-    virtual ~PngInnerData() {}
-    // Methods:
-    virtual bool LoadPNG(const std::string & path) { return loadPNG(path, img_); }
-    virtual bool LoadJPG(const std::string & path) { return false; }
-    virtual bool SavePNG(const std::string & path) const { return savePNG(path, img_); }
-    virtual bool SaveJPG(const std::string & path) const { return false; }
-    virtual uint32_t GetWidth() const { return getWidth(img_); }
-    virtual uint32_t GetHeight() const { return getHeight(img_); }
-
-    void foo() {
-        auto p = boost::gil::view(img_)(0, 0);
-        auto r = p[0];
-    }
-    //virtual Pixel GetPixel(uint32_t x, uint32_t y) const {
-    //    auto & imgView = boost::gil::view(img_);
-    //    return Pixel();
-    //}
-    //virtual void SetPixel(uint32_t x, uint32_t y, const Pixel & value) {
-    //}
-};
+//class PngInnerData : public Texture::InnerData {
+//private:
+//    boost::gil::rgba8_image_t img_;
+//public:
+//    // Constructors:
+//    PngInnerData() {}
+//    virtual ~PngInnerData() {}
+//    // Methods:
+//    virtual bool LoadPNG(const std::string & path) { return loadPNG(path, img_); }
+//    virtual bool LoadJPG(const std::string & path) { return false; }
+//    virtual bool SavePNG(const std::string & path) const { return savePNG(path, img_); }
+//    virtual bool SaveJPG(const std::string & path) const { return false; }
+//    virtual uint32_t GetWidth() const { return getWidth(img_); }
+//    virtual uint32_t GetHeight() const { return getHeight(img_); }
+//};
 
 //--------------------------------------------------------------------------------
 
@@ -153,6 +143,31 @@ public:
     virtual bool SaveJPG(const std::string & path) const { return saveJPG(path, img_); }
     virtual uint32_t GetWidth() const { return getWidth(img_); }
     virtual uint32_t GetHeight() const { return getHeight(img_); }
+
+    virtual Pixel GetPixel(uint32_t x, uint32_t y) const {
+        try {
+            auto & iv = boost::gil::const_view(img_);
+            auto & p = iv(x, y);
+            return Pixel(p[0], p[1], p[2]);
+        } catch (std::exception & e) {
+            std::cerr << "[JpgInnerData::GetPixel] catch => std::exception" << std::endl;
+            std::cerr << "+ WHAT: " << e.what() << std::endl;
+            return Pixel();
+        }
+    }
+
+    virtual void SetPixel(uint32_t x, uint32_t y, const Pixel & value) {
+        try {
+            auto & iv = boost::gil::view(img_);
+            auto & p = iv(x, y);
+            p[0] = value.Red;
+            p[1] = value.Green;
+            p[2] = value.Blue;
+        } catch (std::exception & e) {
+            std::cerr << "[JpgInnerData::SetPixel] catch => std::exception" << std::endl;
+            std::cerr << "+ WHAT: " << e.what() << std::endl;
+        }
+    }
 };
 
 //********************************************************************************
@@ -218,30 +233,38 @@ void Texture::Unload() {
 //--------------------------------------------------------------------------------
 
 Pixel Texture::GetPixel(uint32_t x, uint32_t y) const {
-    //return data_ ? data_->GetPixel(x, y) : Pixel();
-    //...
-    return Pixel();
+    return data_ ? data_->GetPixel(x, y) : Pixel();
 }
 
 //--------------------------------------------------------------------------------
 
 void Texture::SetPixel(uint32_t x, uint32_t y, const Pixel & value) {
-    if (data_) {
-        //data_->SetPixel(x, y, value);
-        //...
-    }
+    if (data_) { data_->SetPixel(x, y, value); }
 }
 
 //--------------------------------------------------------------------------------
 
 void Texture::InvertFilter(const Rect & area) {
-    //TODO: Complete this method...
-    //...
+    for (uint32_t i = 0; i < area.Height; ++i) {
+        for (uint32_t j = 0; j < area.Width; ++j) {
+            auto p = GetPixel(area.X + j, area.Y + i);
+            p.Red = ~p.Red;
+            p.Green = ~p.Green;
+            p.Blue = ~p.Blue;
+            SetPixel(area.X + j, area.Y + i, p);
+        }
+    }
 }
 
 //--------------------------------------------------------------------------------
 
-void Texture::GrayFilter(const Rect & area) {
-    //TODO: Complete this method...
-    //...
+void Texture::GrayScaleFilter(const Rect & area) {
+    for (uint32_t i = 0; i < area.Height; ++i) {
+        for (uint32_t j = 0; j < area.Width; ++j) {
+            auto p = GetPixel(area.X + j, area.Y + i);
+            float gv = p.Red * 0.3f + p.Green * 0.6f + p.Blue * 0.11f;
+            p.Red = p.Green = p.Blue = static_cast<uint8_t>(gv);
+            SetPixel(area.X + j, area.Y + i, p);
+        }
+    }
 }

@@ -57,7 +57,7 @@ public:
     Pixel GetPixel(uint32_t x, uint32_t y) const;
     void SetPixel(uint32_t x, uint32_t y, const Pixel & value);
     void InvertFilter(const Rect & area);
-    void GrayFilter(const Rect & area);
+    void GrayScaleFilter(const Rect & area);
 };
 
 #endif
