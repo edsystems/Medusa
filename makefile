@@ -7,7 +7,7 @@ IDIR    = .
 ODIR    = obj
 FLAGS   = -I$(IDIR) -std=c++11
 CFLAGS  = $(FLAGS) -c
-LFLAGS  = $(FLAGS) -lpthread
+LFLAGS  = $(FLAGS) -lpthread -ljpeg
 SOURCES = main.cpp \
           boostimp.cpp \
           Connection.cpp \
@@ -29,8 +29,6 @@ SOURCES = main.cpp \
 _OBJS   = $(SOURCES:.cpp=.o)
 OBJECTS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 OUTNAME = medusa
-
-#FLAGS = -I$(IDIR) -I$(IDIR)/include -std=c++11
 
 #--------------------------------------------------------------------------------
 # Compilation:
