@@ -43,11 +43,11 @@ public:
     static void AddAndRun(SharedConnection & victim);
     static void ClearFinished();
     // Templates:
-    template<typename T> inline
+    template <typename T> inline
     static void AddAndRun(Connection::SharedSocket & socket) {
         AddAndRun(SharedConnection(new T(socket)));
     }
-    template<typename T, typename U> inline
+    template <typename T, typename U> inline
     static void AddAndRun(Connection::SharedSocket & socket, U param) {
         AddAndRun(SharedConnection(new T(socket, param)));
     }

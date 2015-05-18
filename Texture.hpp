@@ -22,11 +22,11 @@
 #include <memory>
 #include <string>
 
-struct Rectangle {
+struct Rect {
     uint32_t X, Y, Width, Height;
-    Rectangle(uint32_t x = 0, uint32_t y = 0, uint32_t w = 0, uint32_t h = 0) :
+    Rect(uint32_t x = 0, uint32_t y = 0, uint32_t w = 0, uint32_t h = 0) :
         X(x), Y(y), Width(w), Height(h) {}
-    Rectangle(const Rectangle & o) : X(o.X), Y(o.Y), Width(o.Width), Height(o.Height) {}
+    Rect(const Rect & o) : X(o.X), Y(o.Y), Width(o.Width), Height(o.Height) {}
 };
 
 struct Pixel {
@@ -52,12 +52,12 @@ public:
     uint32_t GetHeight() const;
     // Methods:
     bool Load(const std::string & path);
-    bool Save(const std::string & path);
+    bool Save(const std::string & path) const;
     void Unload();
     Pixel GetPixel(uint32_t x, uint32_t y) const;
     void SetPixel(uint32_t x, uint32_t y, const Pixel & value);
-    void InvertFilter(const Rectangle & area);
-    void GrayFilter(const Rectangle & area);
+    void InvertFilter(const Rect & area);
+    void GrayFilter(const Rect & area);
 };
 
 #endif

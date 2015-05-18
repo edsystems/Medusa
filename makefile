@@ -5,7 +5,7 @@
 CC      = g++
 IDIR    = .
 ODIR    = obj
-FLAGS   = -I$(IDIR) -std=c++11
+FLAGS   = -I$(IDIR) -I$(IDIR)/include -std=c++11
 CFLAGS  = $(FLAGS) -c
 LFLAGS  = $(FLAGS) -lpthread
 SOURCES = main.cpp \

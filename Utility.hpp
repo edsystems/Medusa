@@ -28,5 +28,6 @@ void InitializeRandom();
 int GetRandom(int max);
 int GetRandom();
 uint32_t BigToLittleEndian(uint32_t victim);
+std::string GetPathExtension(const std::string & path);
 
 #endif

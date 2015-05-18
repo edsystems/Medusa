@@ -112,9 +112,9 @@ int main(int argc, char ** argv) {
             Message::SendFragmentSent(&socket, i, chunk.size(), chunk.data());
             socketEof = ReceiveMessage(socket, [&] (int8_t * buffer, size_t length) {
                 if (*buffer == Message::FRAGMENT_RECEIVED_ID && length == sizeof(Message::FragmentReceived)) {
-                    cout << "RECEIVED: Fragment received" << "(Fragment " << i << " sent)" << endl;
+                    cout << "RECEIVED: Fragment received (Fragment " << i << " sent)" << endl;
                 } else if (*buffer == Message::JOB_STARTED_ID && length == sizeof(Message::JobStarted)) {
-                    cout << "RECEIVED: Job started" << "(Fragment " << i << " sent)" << endl;
+                    cout << "RECEIVED: Job started (Fragment " << i << " sent)" << endl;
                 } else if (*buffer == Message::ERROR_RESPONSE_ID && length == sizeof(Message::ErrorResponse)) {
                     auto * msg = (Message::ErrorResponse *)buffer;
                     cout << "RECEIVED: Error response" << endl;

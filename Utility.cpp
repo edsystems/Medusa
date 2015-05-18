@@ -75,3 +75,18 @@ uint32_t BigToLittleEndian(uint32_t victim) {
 	hash[3] = aux[0];
     return result;
 }
+
+//--------------------------------------------------------------------------------
+
+std::string GetPathExtension(const std::string & path) {
+    auto begin = path.size() - 1;
+    for (unsigned int i = begin; i >= 0; --i) {
+        char item = path[i];
+        if (item == '.') {
+            return i < begin ? path.substr(i + 1) : "";
+        } else if (item == '/' || item == '\\') {
+            break;
+        }
+    }
+    return "";
+}
