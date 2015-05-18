@@ -61,7 +61,7 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
                 Message::SendErrorResponse(socket_.get(), errorCode);
             }
         } else {
-            throw std::exception("[ListenConnection::process] Invalid JobRequest size!");
+            throw std::runtime_error("[ListenConnection::process] Invalid JobRequest size!");
         }
         break;
     case Message::RECONNECT_REQUEST_ID:
@@ -75,7 +75,7 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
                 Message::SendErrorResponse(socket_.get(), Message::ERROR_CODE_WRONG_JOBID);
             }
         } else {
-            throw std::exception("[ListenConnection::process] Invalid ReconnectRequest size!");
+            throw std::runtime_error("[ListenConnection::process] Invalid ReconnectRequest size!");
         }
         break;
     case Message::FRAGMENT_SENT_ID:
@@ -107,7 +107,7 @@ void ListenConnection::process(int8_t * buffer, size_t length) {
                 Message::SendErrorResponse(socket_.get(), Message::ERROR_CODE_PANIC);
             }
         } else {
-            throw std::exception("[ListenConnection::process] Invalid FragmentSent size!");
+            throw std::runtime_error("[ListenConnection::process] Invalid FragmentSent size!");
         }
         break;
     //case Message::_ID:

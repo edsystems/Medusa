@@ -20,6 +20,7 @@
 #include "JobIdentifier.hpp"
 
 #include <ctime>
+#include <cstring>
 #include <chrono>
 #include <iomanip>
 #include <sstream>
@@ -32,13 +33,13 @@
 //********************************************************************************
 
 JobIdentifier::JobIdentifier() {
-    std::memset(hash_, 0, sizeof(DigestArray));
+    memset(hash_, 0, sizeof(DigestArray));
 }
 
 //--------------------------------------------------------------------------------
 
 JobIdentifier::JobIdentifier(const DigestArrayParam hash) {
-    std::memcpy(hash_, hash, sizeof(DigestArray));
+    memcpy(hash_, hash, sizeof(DigestArray));
 }
 
 //--------------------------------------------------------------------------------
@@ -56,7 +57,7 @@ bool JobIdentifier::operator==(const JobIdentifier & rhs) const {
 //********************************************************************************
 
 void JobIdentifier::GetHash(DigestArrayParam hash) const {
-    std::memcpy(hash, hash_, sizeof(DigestArray));
+    memcpy(hash, hash_, sizeof(DigestArray));
 }
 
 //********************************************************************************
@@ -64,13 +65,13 @@ void JobIdentifier::GetHash(DigestArrayParam hash) const {
 //********************************************************************************
 
 bool JobIdentifier::Equals(const JobIdentifier & rhs) const {
-    return std::memcmp(rhs.hash_, hash_, sizeof(DigestArray)) == 0;
+    return memcmp(rhs.hash_, hash_, sizeof(DigestArray)) == 0;
 }
 
 //--------------------------------------------------------------------------------
 
 bool JobIdentifier::Equals(const DigestArrayParam hash) const {
-    return std::memcmp(hash, hash_, sizeof(DigestArray)) == 0;
+    return memcmp(hash, hash_, sizeof(DigestArray)) == 0;
 }
 
 //--------------------------------------------------------------------------------
@@ -80,7 +81,12 @@ void JobIdentifier::Generate(const std::string & address) {
     auto now = std::chrono::system_clock::now();
     auto nowInMs = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
     auto rawTime = std::chrono::system_clock::to_time_t(now);
-    auto formatedTime = std::put_time(std::gmtime(&rawTime), " %Y-%m-%d %H:%M:%S.");
+    // GCC doesn't have put_time, THANKS!
+    //auto formatedTime = std::put_time(gmtime(&rawTime), " %Y-%m-%d %H:%M:%S.");
+    const size_t MAX_FORMATED_TIME = 128;
+    char formatedTime[MAX_FORMATED_TIME];
+    formatedTime[0] = '\0';
+    strftime(formatedTime, MAX_FORMATED_TIME, " %Y-%m-%d %H:%M:%S.", gmtime(&rawTime));
     auto ms = nowInMs.count() % 1000;
     std::stringstream buffer;
     buffer << address << formatedTime << std::setfill('0') << std::setw(3) << ms;

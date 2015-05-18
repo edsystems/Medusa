@@ -28,7 +28,7 @@ std::vector<ConnectionPool::SharedConnection> ConnectionPool::data_;
 // [ConnectionPool] Methods:
 //********************************************************************************
 
-void ConnectionPool::AddAndRun(SharedConnection & victim) {
+void ConnectionPool::AddAndRun(SharedConnection victim) {
     if (victim) {
         // Find a finished slot inside the pool:
         bool homeless = true;

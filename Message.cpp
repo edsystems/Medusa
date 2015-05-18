@@ -18,6 +18,7 @@
 
 #include "Message.hpp"
 
+#include <cstring>
 #include <boost/asio/write.hpp>
 
 //********************************************************************************
@@ -41,7 +42,7 @@ void Message::BuildJobRequest(JobRequest & victim, const std::string & fileExt,
     auto fileExtLength = fileExt.length() + 1;
     if (fileExtLength < MAX_FILE_EXTENSION_SIZE) {
         victim.code = JOB_REQUEST_ID;
-        std::memcpy(victim.fileExtension, fileExt.c_str(), fileExtLength);
+        memcpy(victim.fileExtension, fileExt.c_str(), fileExtLength);
         victim.fileSize = fileSize;
         victim.filterId = filterId;
     } else {
@@ -54,7 +55,7 @@ void Message::BuildJobRequest(JobRequest & victim, const std::string & fileExt,
 void Message::BuildJobAccepted(JobAccepted & victim,
     const JobIdentifier::DigestArrayParam jobId) {
     victim.code = JOB_ACCEPTED_ID;
-    std::memcpy(victim.jobId, jobId, JobIdentifier::DIGEST_SIZE);
+    memcpy(victim.jobId, jobId, JobIdentifier::DIGEST_SIZE);
 }
 
 //--------------------------------------------------------------------------------
@@ -62,7 +63,7 @@ void Message::BuildJobAccepted(JobAccepted & victim,
 void Message::BuildReconnectRequest(ReconnectRequest & victim,
     const JobIdentifier::DigestArrayParam jobId) {
     victim.code = RECONNECT_REQUEST_ID;
-    std::memcpy(victim.jobId, jobId, JobIdentifier::DIGEST_SIZE);
+    memcpy(victim.jobId, jobId, JobIdentifier::DIGEST_SIZE);
 }
 
 //--------------------------------------------------------------------------------
@@ -79,7 +80,7 @@ void Message::BuildFragmentSent(FragmentSent & victim, int32_t number,
         victim.code = FRAGMENT_SENT_ID;
         victim.fragmentNumber = number;
         victim.fragmentDataSize = length;
-        std::memcpy(victim.fragmentData, data, length);
+        memcpy(victim.fragmentData, data, length);
     } else {
         victim.code = INVALID_ID;
     }
@@ -104,7 +105,7 @@ void Message::BuildJobFinished(JobFinished & victim, const std::string & fileExt
     auto fileExtLength = fileExt.length() + 1;
     if (fileExtLength < MAX_FILE_EXTENSION_SIZE) {
         victim.code = JOB_FINISHED_ID;
-        std::memcpy(victim.fileExtension, fileExt.c_str(), fileExtLength);
+        memcpy(victim.fileExtension, fileExt.c_str(), fileExtLength);
         victim.fileSize = fileSize;
         victim.filterId = filterId;
     } else {

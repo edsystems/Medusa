@@ -52,7 +52,7 @@ void JobConnection::process(int8_t * buffer, size_t length) {
             //TODO: Complete this case...
             //...
         } else {
-            throw std::exception("[JobConnection::process] Invalid ReconnectRequest size!");
+            throw std::runtime_error("[JobConnection::process] Invalid ReconnectRequest size!");
         }
         break;
     }

@@ -19,7 +19,7 @@
 #include "Options.hpp"
 
 #include <iostream>
-#include <exception>
+#include <stdexcept>
 #include <Utility.hpp>
 
 //********************************************************************************
@@ -79,6 +79,6 @@ const std::string & Options::Get(Key key) {
     if (data_.count(key)) {
         return data_[key];
     } else {
-        throw std::exception("[Options::Get] Invalid key!");
+        throw std::runtime_error("[Options::Get] Invalid key!");
     }
 }
