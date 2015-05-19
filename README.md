@@ -1,3 +1,5 @@
+# This project has been discontinued
+
 # Medusa
 This is a distributed embedded system to apply filters on image files.
 
